@@ -4,7 +4,10 @@
   flex: 0 0 36px;
   object-fit: contain;
   border: 0;
+  background: transparent;
   transform: none;
+  filter: grayscale(1) contrast(3) brightness(1.2);
+  mix-blend-mode: screen;
 }
 
 @media (max-width: 620px) {
