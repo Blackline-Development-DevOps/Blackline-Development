@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { serviceGroups } from '../data/site';
+---
+
+<BaseLayout title="Services" description="Websites, applications, automation and managed digital services from Blackline Development.">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Services</p>
+        <h1>Technology shaped around the outcome.</h1>
+        <p class="hero-copy">
+          We build around the actual workflow, audience and operating constraints rather than forcing every project into the same template.
+        </p>
+      </div>
+      <aside class="hero-aside">
+        <strong>Not sure what category it fits?</strong>
+        <p>Describe the result you need. Discovery comes before a technical commitment.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container card-grid">
+      {serviceGroups.map((service, index) => (
+        <article class="card">
+          <span class="card-index">0{index + 1}</span>
+          <h3>{service.title}</h3>
+          <p>{service.summary}</p>
+          <p class="detail">{service.detail}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split-panel">
+      <article class="panel">
+        <p class="eyebrow">Commissioned work</p>
+        <h3>Build something specific.</h3>
+        <p>Scope and price the actual project first, then choose the service pace that fits.</p>
+        <a class="button" href="/commissions">Commissioned development</a>
+      </article>
+      <article class="panel">
+        <p class="eyebrow">Ongoing services</p>
+        <h3>Keep the infrastructure managed.</h3>
+        <p>Hosting, maintenance, email and domain management remain separate subscriptions.</p>
+        <a class="button secondary" href="/managed-services">Managed services</a>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { managedServices } from '../data/managedServices';
+import { publicCommissionTiers, serviceGroups, site } from '../data/site';
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Software built around the work</p>
+        <h1>Build what the business actually needs.</h1>
+        <p class="hero-copy">
+          Blackline Development creates websites, applications, bots, integrations and automation for people and businesses that need something more specific than an off-the-shelf tool.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href={site.primaryAction.href}>Start a project</a>
+          <a class="button secondary" href="/services">Explore services</a>
+        </div>
+      </div>
+
+      <aside class="hero-aside" aria-label="How Blackline works">
+        <strong>Built to be owned.</strong>
+        <p>
+          Clear scope, governed development, reviewable changes and a clean handover. Managed services are available separately when you want us to keep running it too.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">What we build</p>
+          <h2>Useful systems, not software for the sake of it.</h2>
+        </div>
+        <p>
+          The starting point is the outcome you need. The technology comes after the problem is understood, so the finished product stays focused instead of accumulating unnecessary complexity.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        {serviceGroups.map((service, index) => (
+          <article class="card">
+            <span class="card-index">0{index + 1}</span>
+            <h3>{service.title}</h3>
+            <p>{service.summary}</p>
+            <p class="detail">{service.detail}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="managed-services">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Managed services</p>
+          <h2>Keep the parts you need managed.</h2>
+        </div>
+        <p>
+          Managed services are standalone subscriptions, separate from commissioned development. Choose only what you need, monthly or yearly.
+        </p>
+      </div>
+
+      <div class="pricing-wrap">
+        <table class="pricing-table">
+          <thead>
+            <tr>
+              <th scope="col">Service</th>
+              <th scope="col">Monthly</th>
+              <th scope="col">Yearly</th>
+              <th scope="col">Yearly saving</th>
+            </tr>
+          </thead>
+          <tbody>
+            {managedServices.map((service) => (
+              <tr>
+                <td>
+                  <strong>{service.name}</strong>
+                  {service.note && <span class="table-note">{service.note}</span>}
+                </td>
+                <td class="price">£{service.monthly}</td>
+                <td class="price">£{service.yearly}</td>
+                <td>{service.yearlySaving}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="hero-actions">
+        <a class="button secondary" href="/managed-services">View managed services</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Commissioned development</p>
+          <h2>The job is priced before you choose the pace.</h2>
+        </div>
+        <p>
+          We scope the actual work first and establish a base job price. Public service tiers then change response time, queue priority and expected development pace — not the scope you receive.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        {publicCommissionTiers.map((tier, index) => (
+          <article class="card">
+            <span class="card-index">0{index + 1}</span>
+            <h3>{tier.name}</h3>
+            <p><strong>{tier.uplift}</strong></p>
+            <p class="detail">Initial response: {tier.response}</p>
+            <p class="detail">{tier.pace}</p>
+          </article>
+        ))}
+        <article class="card">
+          <span class="card-index">04</span>
+          <h3>Need something scoped?</h3>
+          <p>Tell us what the finished result needs to do. We will identify the unknowns before pretending there is a reliable price.</p>
+          <a class="button secondary" href="/contact">Start with the requirement</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split-panel">
+      <article class="panel">
+        <p class="eyebrow">For a new build</p>
+        <h3>Commission the work. Host it wherever makes sense.</h3>
+        <p>
+          A commission does not force you into a monthly Blackline subscription. You can take the finished work and self-host, or add managed services separately.
+        </p>
+        <a class="button" href="/commissions">How commissions work</a>
+      </article>
+
+      <article class="panel">
+        <p class="eyebrow">For ongoing support</p>
+        <h3>Keep Blackline involved after launch.</h3>
+        <p>
+          Hosting, maintenance, business email and domain management can remain with us without being bundled into the original development price.
+        </p>
+        <a class="button secondary" href="/managed-services">See subscription pricing</a>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
