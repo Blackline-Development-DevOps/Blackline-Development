@@ -30,3 +30,7 @@ Do not duplicate every Media master into the public repository by default. Keep 
 - If an asset needs a new crop, colourway or substantive design change, treat that as an explicit brand/design change rather than silently modifying the master.
 - Do not embed private Media URLs, tokens or runtime dependencies into the public site.
 - Remove superseded temporary branding once an approved replacement is wired in.
+
+## Import boundary
+
+`MEDIA_REPO_TOKEN` may remain available as a repository secret for future explicitly approved private-Media reads, but the current public brand-mark slice does not consume it. The connected workflow authoring path rejected a secret-referencing temporary workflow, so that safeguard was not bypassed. The public derivative was instead prepared from the already verified Media review artifact, with no token value read, printed or persisted.
