@@ -24,13 +24,21 @@ const path = Astro.url.pathname;
     <meta name="description" content={description} />
     <meta name="theme-color" content="#080808" />
     <link rel="canonical" href={Astro.url} />
+    <link rel="icon" type="image/svg+xml" href="/brand/blackline-development/brand-mark-dark.svg" />
     <title>{pageTitle}</title>
   </head>
   <body>
     <header class="site-header">
       <div class="container nav-shell">
         <a class="wordmark" href="/" aria-label="Blackline Development home">
-          <span class="wordmark-mark" aria-hidden="true"></span>
+          <img
+            class="wordmark-mark"
+            src="/brand/blackline-development/brand-mark-dark.svg"
+            width="36"
+            height="36"
+            alt=""
+            aria-hidden="true"
+          />
           <span>Blackline Development</span>
         </a>
 
