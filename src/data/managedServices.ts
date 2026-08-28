@@ -7,11 +7,11 @@ export type ManagedService = {
 };
 
 export const managedServicesSource = {
-  authority: 'Development Operations #669 / approved Stripe catalogue',
-  reviewed: '2026-08-28',
+  authority: 'Live Blackline Development Stripe catalogue + Development Operations #669',
+  verified: '2026-08-28',
   currency: 'GBP',
-  canonical: false,
-  note: 'Website presentation data only. Stripe / Development Operations remains authoritative.',
+  runtimeSource: 'static snapshot',
+  note: 'The website does not query Stripe at runtime yet. Any future catalogue integration must fail safely on unavailable or conflicting pricing evidence.',
 } as const;
 
 export const managedServices: ManagedService[] = [
