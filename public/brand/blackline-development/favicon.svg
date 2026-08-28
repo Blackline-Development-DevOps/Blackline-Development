@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Blackline Development">
+  <g fill="none" stroke="#f4f4f0" stroke-width="3.25" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M10 9v46" />
+    <path d="M10 10h17c7.5 0 11 4 11 10s-3.5 10-11 10H10" />
+    <path d="M10 30h18c8 0 12 4.75 12 12s-4 12-12 12H10" />
+    <path d="M46 9v45h11" />
+  </g>
+</svg>
