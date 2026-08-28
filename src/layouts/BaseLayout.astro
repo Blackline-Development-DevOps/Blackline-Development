@@ -1,0 +1,62 @@
+---
+import { site } from '../data/site';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = site.name,
+  description = site.description,
+} = Astro.props;
+
+const pageTitle = title === site.name ? title : `${title} | ${site.name}`;
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#080808" />
+    <link rel="canonical" href={Astro.url} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-shell">
+        <a class="wordmark" href="/" aria-label="Blackline Development home">
+          <span class="wordmark-mark" aria-hidden="true"></span>
+          <span>Blackline Development</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Primary navigation">
+          {site.navigation.map((item) => (
+            <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a>
+          ))}
+          <a href={site.primaryAction.href}>{site.primaryAction.label}</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <strong>Blackline Development</strong><br />
+          Software, websites, automation and managed services.
+        </div>
+        <div>
+          Pricing shown on this site is subject to the current approved Blackline Development catalogue and quote terms.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
