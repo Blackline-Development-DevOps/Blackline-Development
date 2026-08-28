@@ -2,38 +2,79 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Contact" description="Start a website, software, automation or managed-service conversation with Blackline Development.">
+<BaseLayout title="Contact" description="Prepare a website, software, automation or managed-service requirement for Blackline Development.">
   <section class="hero">
     <div class="container hero-grid">
       <div>
         <p class="eyebrow">Start a project</p>
-        <h1>Tell us what needs to work better.</h1>
+        <h1>Start with what needs to work better.</h1>
         <p class="hero-copy">
-          You do not need a finished specification. Start with the outcome, the problem, what you already have and anything you know must not change.
+          You do not need a finished specification before speaking to Blackline. A useful starting point is the outcome you want, what exists today, who needs to use it and anything that cannot be compromised.
         </p>
       </div>
-      <aside class="hero-aside">
-        <strong>Intake connection pending</strong>
-        <p>The public project-intake and email handoff will be connected as a separately governed integration before production launch.</p>
+      <aside class="hero-aside" aria-label="Preparing a project requirement">
+        <strong>Unknowns are useful too.</strong>
+        <p>
+          If you know where the problem is but not the right technical answer, say that. Discovery is there to remove uncertainty before it becomes expensive implementation work.
+        </p>
       </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Useful starting information</p>
+          <h2>A short requirement is enough to begin.</h2>
+        </div>
+        <p>
+          The best first conversation is about the result and constraints, not a long form full of technical questions you may not be able to answer yet.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <article class="card">
+          <span class="card-index">01</span>
+          <h3>The outcome</h3>
+          <p>What should be easier, faster, safer or possible when the work is finished?</p>
+        </article>
+        <article class="card">
+          <span class="card-index">02</span>
+          <h3>The people</h3>
+          <p>Who will use it, who owns the decision and who needs to understand the finished result?</p>
+        </article>
+        <article class="card">
+          <span class="card-index">03</span>
+          <h3>The starting point</h3>
+          <p>What already exists today — even if that is a spreadsheet, several separate tools or a manual process?</p>
+        </article>
+        <article class="card">
+          <span class="card-index">04</span>
+          <h3>The constraints</h3>
+          <p>Deadlines, integrations, budgets, privacy requirements and anything that must not change.</p>
+        </article>
+      </div>
     </div>
   </section>
 
   <section class="section">
     <div class="container split-panel">
       <article class="panel">
-        <p class="eyebrow">Useful starting information</p>
-        <h3>What are you trying to achieve?</h3>
+        <p class="eyebrow">Commissioned development</p>
+        <h3>Need something built?</h3>
         <p>
-          Useful context includes the desired result, who will use it, what exists today, any deadlines or dependencies, and the parts you are unsure about. Unknowns are allowed.
+          The work is scoped and priced before you choose a delivery tier, so priority changes the pace rather than quietly changing what is included.
         </p>
+        <a class="button" href="/commissions">How commissions work</a>
       </article>
       <article class="panel">
-        <p class="eyebrow">Next phase</p>
-        <h3>Guided discovery without the giant form.</h3>
+        <p class="eyebrow">Managed services</p>
+        <h3>Need something kept running?</h3>
         <p>
-          A later approved site capability will support live guided questionnaires that help clients work through requirements conversationally before human review.
+          Hosting, maintenance, business email and domain management are available separately from commissioned development.
         </p>
+        <a class="button secondary" href="/managed-services">View managed services</a>
       </article>
     </div>
   </section>
