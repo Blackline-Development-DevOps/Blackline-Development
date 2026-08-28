@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://blacklinedevelopment.uk/sitemap-index.xml
