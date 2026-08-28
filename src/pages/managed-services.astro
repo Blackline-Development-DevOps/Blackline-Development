@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { administrativeServices, managedServices } from '../data/managedServices';
+---
+
+<BaseLayout title="Managed Services" description="Standalone managed hosting, maintenance, business email and domain services from Blackline Development.">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Managed services</p>
+        <h1>Only keep the services you want managed.</h1>
+        <p class="hero-copy">
+          Hosting and operational support are separate from development commissions. Subscribe to the individual services you need without being forced into a bundle.
+        </p>
+      </div>
+      <aside class="hero-aside">
+        <strong>Monthly or yearly.</strong>
+        <p>Yearly subscriptions are currently priced at ten monthly payments, a 16.7% saving against paying monthly for twelve months.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Subscription pricing</p>
+          <h2>Standalone services.</h2>
+        </div>
+        <p>
+          These prices mirror the currently approved Blackline Development managed-services catalogue. Stripe/Development Operations remains authoritative if catalogue state changes.
+        </p>
+      </div>
+
+      <div class="pricing-wrap">
+        <table class="pricing-table">
+          <thead>
+            <tr>
+              <th scope="col">Service</th>
+              <th scope="col">Monthly</th>
+              <th scope="col">Yearly</th>
+              <th scope="col">Saving</th>
+            </tr>
+          </thead>
+          <tbody>
+            {managedServices.map((service) => (
+              <tr>
+                <td>
+                  <strong>{service.name}</strong>
+                  {service.note && <span class="table-note">{service.note}</span>}
+                </td>
+                <td class="price">£{service.monthly}</td>
+                <td class="price">£{service.yearly}</td>
+                <td>{service.yearlySaving}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">One-time administration</p>
+          <h2>Separate from subscriptions.</h2>
+        </div>
+        <p>Third-party costs are not hidden inside Blackline administrative charges.</p>
+      </div>
+
+      <div class="card-grid">
+        {administrativeServices.map((service, index) => (
+          <article class="card">
+            <span class="card-index">0{index + 1}</span>
+            <h3>{service.name}</h3>
+            <p class="price">£{service.price} {service.billing}</p>
+            <p class="detail">{service.note}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
