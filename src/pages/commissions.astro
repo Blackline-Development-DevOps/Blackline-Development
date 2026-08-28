@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { publicCommissionTiers } from '../data/site';
+---
+
+<BaseLayout title="Commissioned Development" description="Commission bespoke software, websites, bots and automation from Blackline Development.">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Commissioned development</p>
+        <h1>Price the work. Then choose the pace.</h1>
+        <p class="hero-copy">
+          Every commission starts with the actual requirement. We establish scope and a base job price before service tier selection, so priority never becomes a substitute for clear scope.
+        </p>
+      </div>
+      <aside class="hero-aside">
+        <strong>No forced subscription.</strong>
+        <p>You can take the completed work and self-host it. Managed services are optional and priced separately.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Public tiers</p>
+          <h2>Same agreed scope. Different service priority.</h2>
+        </div>
+        <p>
+          Priority and Accelerated increase the approved base job price in exchange for faster response, higher queue treatment and a faster feasible target pace. Exact delivery windows depend on the scoped work and current capacity.
+        </p>
+      </div>
+      <div class="card-grid">
+        {publicCommissionTiers.map((tier, index) => (
+          <article class="card">
+            <span class="card-index">0{index + 1}</span>
+            <h3>{tier.name}</h3>
+            <p class="price">{tier.uplift}</p>
+            <p class="detail">Response target: {tier.response}</p>
+            <p class="detail">{tier.pace}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split-panel">
+      <article class="panel">
+        <p class="eyebrow">How pricing works</p>
+        <h3>The base price belongs to the job.</h3>
+        <p>
+          Workload, complexity, uncertainty, testing and delivery requirements are assessed first. The Director-approved base job price is then used for the public tier calculation.
+        </p>
+      </article>
+      <article class="panel">
+        <p class="eyebrow">Start</p>
+        <h3>Bring the requirement, not a technical specification.</h3>
+        <p>We can identify the missing decisions during discovery instead of asking you to design the solution for us.</p>
+        <a class="button" href="/contact">Start a project</a>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

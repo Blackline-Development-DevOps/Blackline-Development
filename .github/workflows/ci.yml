@@ -1,0 +1,49 @@
+name: Foundation CI
+
+on:
+  pull_request:
+    branches:
+      - development
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          if [[ -f package-lock.json ]]; then
+            echo "Using governed reproducible install: npm ci"
+            npm ci
+          else
+            echo "::warning::package-lock.json is missing; bootstrap validation is using npm install. This candidate must not be treated as release-ready until the lockfile is committed and npm ci passes."
+            npm install
+          fi
+
+      - name: Test
+        run: npm test
+
+      - name: Check
+        run: npm run check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
