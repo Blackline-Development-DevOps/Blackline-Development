@@ -1,40 +1,126 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const startingPoints = [
+  {
+    title: 'The outcome',
+    copy: 'What should be easier, faster, clearer or newly possible when the work is finished?',
+  },
+  {
+    title: 'The people',
+    copy: 'Who will use it, manage it or depend on it? That usually matters more than choosing a technology up front.',
+  },
+  {
+    title: 'The boundaries',
+    copy: 'Deadlines, existing systems, budgets, hosting constraints or anything that must not change belong in the conversation early.',
+  },
+  {
+    title: 'The unknowns',
+    copy: 'You do not need to solve every detail before getting in touch. Uncertainty is useful information when it is made visible.',
+  },
+] as const;
+
+const nextSteps = [
+  {
+    title: 'Review the requirement',
+    copy: 'We start by understanding the result you need rather than immediately turning a short message into a fixed technical solution.',
+  },
+  {
+    title: 'Clarify the gaps',
+    copy: 'Questions are used to remove uncertainty, expose dependencies and separate essential work from optional ideas.',
+  },
+  {
+    title: 'Scope the actual job',
+    copy: 'Once the work is understood, Blackline can establish the base job price and explain what is included and excluded.',
+  },
+  {
+    title: 'Choose the delivery pace',
+    copy: 'If you proceed, Standard, Priority or Accelerated is selected after the base scope is priced. The tier does not redefine the job.',
+  },
+] as const;
 ---
 
-<BaseLayout title="Contact" description="Start a website, software, automation or managed-service conversation with Blackline Development.">
+<BaseLayout title="Contact" description="Prepare a website, software, automation or managed-service requirement for Blackline Development.">
   <section class="hero">
     <div class="container hero-grid">
       <div>
         <p class="eyebrow">Start a project</p>
-        <h1>Tell us what needs to work better.</h1>
+        <h1>Start with what needs to work better.</h1>
         <p class="hero-copy">
-          You do not need a finished specification. Start with the outcome, the problem, what you already have and anything you know must not change.
+          You do not need a finished specification. A useful first conversation is about the outcome, the people involved, the boundaries and the things that are still uncertain.
         </p>
       </div>
-      <aside class="hero-aside">
-        <strong>Intake connection pending</strong>
-        <p>The public project-intake and email handoff will be connected as a separately governed integration before production launch.</p>
+      <aside class="hero-aside" aria-label="Project intake status">
+        <strong>No giant form required.</strong>
+        <p>The direct public intake channel is being connected separately. This page shows what to prepare and what happens after the first contact.</p>
       </aside>
     </div>
   </section>
 
+  <section class="section process-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">What to bring</p>
+          <h2>Four things are enough to start.</h2>
+        </div>
+        <p>
+          The aim is not to make you write Blackline's specification for us. Give us enough context to understand the problem and keep the things you do not know visible.
+        </p>
+      </div>
+
+      <div class="process-list" aria-label="Useful project starting information">
+        {startingPoints.map((item, index) => (
+          <article class="process-step">
+            <span class="process-number" aria-hidden="true">0{index + 1}</span>
+            <div class="process-copy">
+              <h3>{item.title}</h3>
+              <p>{item.copy}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <section class="section">
-    <div class="container split-panel">
-      <article class="panel">
-        <p class="eyebrow">Useful starting information</p>
-        <h3>What are you trying to achieve?</h3>
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">What happens next</p>
+          <h2>Understanding comes before quoting.</h2>
+        </div>
         <p>
-          Useful context includes the desired result, who will use it, what exists today, any deadlines or dependencies, and the parts you are unsure about. Unknowns are allowed.
+          A reliable quote needs a reliable scope. Blackline separates discovery, base job pricing and service-tier choice so speed does not get confused with what is actually being built.
         </p>
-      </article>
-      <article class="panel">
-        <p class="eyebrow">Next phase</p>
-        <h3>Guided discovery without the giant form.</h3>
+      </div>
+
+      <div class="process-list" aria-label="Blackline project intake steps">
+        {nextSteps.map((item, index) => (
+          <article class="process-step">
+            <span class="process-number" aria-hidden="true">0{index + 1}</span>
+            <div class="process-copy">
+              <h3>{item.title}</h3>
+              <p>{item.copy}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container status-band" role="status" aria-label="Public intake status">
+      <div>
+        <p class="eyebrow">Direct intake</p>
+        <h2>Connection pending.</h2>
+      </div>
+      <div>
         <p>
-          A later approved site capability will support live guided questionnaires that help clients work through requirements conversationally before human review.
+          The site will gain a direct project-intake handoff through its own governed integration. Until that is connected and verified, Blackline will not publish a form that appears to submit but has nowhere safe to send the information.
         </p>
-      </article>
+        <a class="text-link" href="/services">Review services while you prepare <span aria-hidden="true">→</span></a>
+      </div>
     </div>
   </section>
 </BaseLayout>

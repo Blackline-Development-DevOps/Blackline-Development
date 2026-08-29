@@ -2,6 +2,29 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { managedServices } from '../data/managedServices';
 import { publicCommissionTiers, serviceGroups, site } from '../data/site';
+
+const deliverySteps = [
+  {
+    title: 'Start with the outcome',
+    copy: 'Tell us what needs to work better, who it affects and what a good result looks like. A polished specification is not required.',
+  },
+  {
+    title: 'Make the unknowns visible',
+    copy: 'Constraints, dependencies and missing information are identified before they turn into hidden assumptions or surprise work.',
+  },
+  {
+    title: 'Scope and price the real job',
+    copy: 'The base job price comes from the work required. Service tier is chosen afterwards and changes priority and pace, not the agreed scope.',
+  },
+  {
+    title: 'Build in reviewable steps',
+    copy: 'Changes stay focused, testable and easy to review so progress remains understandable rather than disappearing into a black box.',
+  },
+  {
+    title: 'Hand over cleanly',
+    copy: 'Take the finished work and run it yourself, or add only the managed services you actually want Blackline to keep operating.',
+  },
+] as const;
 ---
 
 <BaseLayout>
@@ -20,9 +43,9 @@ import { publicCommissionTiers, serviceGroups, site } from '../data/site';
       </div>
 
       <aside class="hero-aside" aria-label="How Blackline works">
-        <strong>Built to be owned.</strong>
+        <strong>Start with the problem, not a specification.</strong>
         <p>
-          Clear scope, governed development, reviewable changes and a clean handover. Managed services are available separately when you want us to keep running it too.
+          We make the unknowns visible, scope the actual work and keep delivery reviewable. Managed services stay separate from the commission itself.
         </p>
       </aside>
     </div>
@@ -47,6 +70,32 @@ import { publicCommissionTiers, serviceGroups, site } from '../data/site';
             <h3>{service.title}</h3>
             <p>{service.summary}</p>
             <p class="detail">{service.detail}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section process-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">How the work moves</p>
+          <h2>A clear path from problem to handover.</h2>
+        </div>
+        <p>
+          Good delivery should reduce uncertainty as the project moves forward. Each step has a job: understand, expose risk, agree the work, build it clearly and leave you with something you can actually own.
+        </p>
+      </div>
+
+      <div class="process-list" aria-label="Blackline Development delivery process">
+        {deliverySteps.map((step, index) => (
+          <article class="process-step">
+            <span class="process-number" aria-hidden="true">0{index + 1}</span>
+            <div class="process-copy">
+              <h3>{step.title}</h3>
+              <p>{step.copy}</p>
+            </div>
           </article>
         ))}
       </div>
