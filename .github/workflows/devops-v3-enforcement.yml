@@ -1,0 +1,17 @@
+name: Dev Ops v3 enforcement
+
+on:
+  pull_request:
+    branches:
+      - development
+      - production
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  enforce:
+    uses: Blackline-Development-DevOps/development-operations/.github/workflows/reusable-v3-enforcement.yml@a8aac3ed85eef623c1e85510810f92eeb8ca7700
+    with:
+      manifest-path: .blackline-devops.json
