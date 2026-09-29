@@ -2,6 +2,8 @@
 import { site } from '../data/site';
 import '../styles/global.css';
 import '../styles/brand.css';
+import '../styles/experience.css';
+import '../styles/accessibility.css';
 
 interface Props {
   title?: string;
@@ -15,6 +17,7 @@ const {
 
 const pageTitle = title === site.name ? title : `${title} | ${site.name}`;
 const path = Astro.url.pathname;
+const canonicalUrl = new URL(path, Astro.site ?? Astro.url.origin).toString();
 ---
 
 <!doctype html>
@@ -24,11 +27,27 @@ const path = Astro.url.pathname;
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#080808" />
-    <link rel="canonical" href={Astro.url} />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="index,follow" />
+
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/brand/blackline-development/favicon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+
     <title>{pageTitle}</title>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <header class="site-header">
       <div class="container nav-shell">
         <a class="wordmark" href="/" aria-label="Blackline Development home">
@@ -52,7 +71,7 @@ const path = Astro.url.pathname;
       </div>
     </header>
 
-    <main>
+    <main id="main-content" tabindex="-1">
       <slot />
     </main>
 
@@ -63,7 +82,7 @@ const path = Astro.url.pathname;
           Software, websites, automation and managed services.
         </div>
         <div>
-          Pricing shown on this site is subject to the current approved Blackline Development catalogue and quote terms.
+          Pricing shown on this site is subject to the current Blackline Development catalogue and quote terms.
         </div>
       </div>
     </footer>

@@ -6,15 +6,16 @@ Blackline Development provides custom software development and digital services 
 
 ## Current status
 
-The repository is in its initial governed website-foundation phase.
+The public-site foundation is live in repository source and the current governed release line is **v0.1.1 — Branding & Presentation Polish**.
 
 - Production branch: `production`
 - Integration branch: `development`
-- Current implementation branch: `feature/public-site-foundation`
-- Current release: **Unscheduled** — no version has been assigned
-- Production deployment/domain cutover: **not authorised by this foundation work**
+- Current candidate branch: `ui/public-launch-readiness`
+- Current release: **v0.1.1**
+- Next planned release: **v0.2.0 — Client Contact & Commission Intake**
+- Production deployment/domain state: verify separately; source state does not prove a live deployment.
 
-Implementation authority is tracked by repository Issue #1 and Development Operations Issue #692.
+Implementation authority is tracked by repository Issue #6, v0.1.1 umbrella #22 and the canonical roadmap #8.
 
 ## Architecture
 
@@ -23,8 +24,8 @@ The public site uses a static-first Astro + TypeScript architecture.
 Why:
 - fast public-page delivery;
 - simple Railway-compatible deployment;
-- minimal runtime attack surface for the initial marketing site;
-- clean path to later server/API integrations without forcing them into the public foundation;
+- minimal runtime attack surface for the public marketing site;
+- clean path to later server/API integrations without forcing them into the static surface;
 - maintainable component/content boundaries.
 
 Current public routes:
@@ -32,43 +33,63 @@ Current public routes:
 - `/services` — Services
 - `/commissions` — Commissioned Development
 - `/managed-services` — Managed Services / pricing
-- `/work` — Portfolio foundation
+- `/work` — Work and case-study evidence standard
 - `/about` — About
-- `/contact` — Contact/discovery foundation
+- `/contact` — Public project contact guidance
+- `/404` — Not-found route
 
 ## Commercial boundaries
 
 Commissioned development and managed-service subscriptions are intentionally separate.
 
-Managed-service pricing displayed by the site is a public presentation snapshot verified against the live Blackline Development Stripe catalogue and Development Operations pricing policy. The website is **not** an independent pricing authority.
+Managed-service pricing displayed by the site is a public presentation snapshot of the current approved Blackline Development catalogue. The website is not an independent pricing authority.
 
-Commission service tiers are percentage-based service-priority choices applied only after the underlying work has been scoped and given an approved Base Job Price.
+Commission service tiers are percentage-based service-priority choices applied only after the underlying work has been scoped and given an agreed Base Job Price.
+
+## Contact and privacy
+
+The v0.1.1 public site may direct visitors to `support@blacklinedevelopment.uk` through a standard `mailto:` link.
+
+It does not collect project details, credentials, payment data or documents through a website form. Structured intake, validation, privacy/retention rules and governed handoff belong to v0.2.0.
 
 ## Brand assets
 
-Approved Blackline Development logo assets belong under `public/brand/` using the naming rules in `public/brand/README.md`.
+Approved Blackline Development public derivatives live under `public/brand/`. Canonical Media masters remain private and are not fetched at runtime.
 
-Until approved logo files are available on the implementation branch, the site uses a temporary text wordmark. Do not redraw or invent a replacement logo.
+The header uses the approved public mark derivative. A dedicated transparent SVG favicon is used for browser tabs.
+
+## Search and accessibility baseline
+
+The launch-readiness candidate includes:
+- canonical page URLs;
+- Open Graph and Twitter summary metadata;
+- `robots.txt`;
+- a static sitemap for public routes;
+- keyboard-visible focus styles;
+- a skip-to-content link;
+- reduced-motion handling;
+- responsive layouts inherited from the public design system.
+
+Manual desktop/mobile/keyboard verification is still required before claiming the release complete.
 
 ## Development
 
 Requires Node.js 22.12.0 or newer.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Verification commands:
+Required verification before completion:
 
 ```bash
+npm ci
 npm test
 npm run check
 npm run lint
 npm run build
 ```
-
-A committed lockfile is required before this work can be treated as release-ready and the governed `npm ci` completion check can be satisfied.
 
 ## Governance
 
@@ -83,14 +104,10 @@ A committed lockfile is required before this work can be treated as release-read
 
 See `CONTRIBUTING.md` for the local contributor contract.
 
-## Future integrations
+## Planned progression
 
-The architecture may later support separately approved work for:
-- Stripe Checkout/Billing/customer portal;
-- commission intake and quote/tier workflows;
-- email correspondence;
-- AI-guided client questionnaires;
-- authenticated client areas;
-- portfolio/case-study publishing workflows.
+The canonical roadmap remains:
 
-Those capabilities are not authorised merely because the public-site foundation anticipates them.
+`v0.1.1 → v0.2.0 → v0.3.0 → v0.4.0 → v0.5.0 → v0.6.0 → v0.7.0 → v0.8.0 → v1.0.0`
+
+Later releases cover structured client intake, Stripe commerce, governed business email integration, questionnaires, AI-guided discovery, the customer portal and final production hardening. Their existing release boundaries remain authoritative.
