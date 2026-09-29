@@ -6,26 +6,27 @@ Blackline Development provides custom software development and digital services 
 
 ## Current status
 
-The public-site foundation is live in repository source and the current governed release line is **v0.1.1 — Branding & Presentation Polish**.
+The governed development line has moved into **v0.2.0 — Client Contact & Commission Intake**.
 
 - Production branch: `production`
 - Integration branch: `development`
-- Current candidate branch: `ui/public-launch-readiness`
-- Current release: **v0.1.1**
-- Next planned release: **v0.2.0 — Client Contact & Commission Intake**
+- Current implementation branch: `feature/client-intake-ux`
+- Current release: **v0.2.0**
 - Production deployment/domain state: verify separately; source state does not prove a live deployment.
 
-Implementation authority is tracked by repository Issue #6, v0.1.1 umbrella #22 and the canonical roadmap #8.
+The v0.1.1 launch-readiness candidate was merged to `development` through PR #48 as `ee6d47cf417f99d529db554f87b3beb4c54ff737`. Its exact pre-merge candidate passed `npm ci`, `npm test`, `npm run check`, `npm run lint` and `npm run build`.
+
+v0.2.0 implementation authority is tracked by umbrella #9, Design Briefs #25/#26 and work order #49.
 
 ## Architecture
 
-The public site uses a static-first Astro + TypeScript architecture.
+The public site uses Astro + TypeScript with a static-first public surface.
 
 Why:
 - fast public-page delivery;
+- minimal runtime attack surface;
 - simple Railway-compatible deployment;
-- minimal runtime attack surface for the public marketing site;
-- clean path to later server/API integrations without forcing them into the static surface;
+- clear separation between presentation and later governed server integrations;
 - maintainable component/content boundaries.
 
 Current public routes:
@@ -35,7 +36,7 @@ Current public routes:
 - `/managed-services` — Managed Services / pricing
 - `/work` — Work and case-study evidence standard
 - `/about` — About
-- `/contact` — Public project contact guidance
+- `/contact` — General contact and commission-intake preparation
 - `/404` — Not-found route
 
 ## Commercial boundaries
@@ -46,21 +47,29 @@ Managed-service pricing displayed by the site is a public presentation snapshot 
 
 Commission service tiers are percentage-based service-priority choices applied only after the underlying work has been scoped and given an agreed Base Job Price.
 
-## Contact and privacy
+## v0.2.0 intake boundary
 
-The v0.1.1 public site may direct visitors to `support@blacklinedevelopment.uk` through a standard `mailto:` link.
+The first v0.2.0 intake slice keeps customer information local to the browser until the customer explicitly opens and sends an email from their own mail client.
 
-It does not collect project details, credentials, payment data or documents through a website form. Structured intake, validation, privacy/retention rules and governed handoff belong to v0.2.0.
+It:
+- distinguishes general enquiries from commission requests;
+- asks for the desired outcome before technical detail;
+- supports explicit `not sure / needs discussion` states;
+- progressively reveals optional context;
+- prepares a structured email draft to `support@blacklinedevelopment.uk`;
+- does not claim that pressing the website button sends or stores anything;
+- does not request credentials, payment details or document uploads;
+- does not create approved implementation work, a quote, payment state or schedule.
+
+Server-side submission, retention, rate limiting, idempotency and the governed Development Operations handoff remain under Design Brief #26 and must not be invented before that architecture is approved.
 
 ## Brand assets
 
 Approved Blackline Development public derivatives live under `public/brand/`. Canonical Media masters remain private and are not fetched at runtime.
 
-The header uses the approved public mark derivative. A dedicated transparent SVG favicon is used for browser tabs.
-
 ## Search and accessibility baseline
 
-The launch-readiness candidate includes:
+The site includes:
 - canonical page URLs;
 - Open Graph and Twitter summary metadata;
 - `robots.txt`;
@@ -68,9 +77,10 @@ The launch-readiness candidate includes:
 - keyboard-visible focus styles;
 - a skip-to-content link;
 - reduced-motion handling;
-- responsive layouts inherited from the public design system.
+- responsive layouts;
+- progressively disclosed optional intake fields with semantic form labels and live status messaging.
 
-Manual desktop/mobile/keyboard verification is still required before claiming the release complete.
+Manual desktop/mobile/keyboard verification remains required before production promotion.
 
 ## Development
 
@@ -93,11 +103,11 @@ npm run build
 
 ## Governance
 
-- Do not commit implementation directly to `development` or `production`.
+- Do not commit routine implementation directly to `development` or `production`.
 - Start work from the latest `development` on a descriptive branch.
-- Open Draft PRs into `development`.
-- Never merge without explicit approval.
-- Production promotion is a separate Director-approved step.
+- Open implementation work as a Draft PR into `development`.
+- Reviewed development/sandbox integration is pre-authorised by the Director and may be merged without asking for per-merge permission.
+- Production/live promotion remains a separate explicit Director approval.
 - Do not invent release/version numbers.
 - Do not commit secrets, credentials, payment/customer data, personal documents or unrelated files.
 - No telemetry/analytics is introduced without explicit approval.
@@ -108,6 +118,6 @@ See `CONTRIBUTING.md` for the local contributor contract.
 
 The canonical roadmap remains:
 
-`v0.1.1 → v0.2.0 → v0.3.0 → v0.4.0 → v0.5.0 → v0.6.0 → v0.7.0 → v0.8.0 → v1.0.0`
+`v0.2.0 → v0.3.0 → v0.4.0 → v0.5.0 → v0.6.0 → v0.7.0 → v0.8.0 → v1.0.0`
 
-Later releases cover structured client intake, Stripe commerce, governed business email integration, questionnaires, AI-guided discovery, the customer portal and final production hardening. Their existing release boundaries remain authoritative.
+Later releases cover Stripe commerce, governed business email integration, questionnaires, AI-guided discovery, the customer portal and final production hardening. Their existing release boundaries remain authoritative.
