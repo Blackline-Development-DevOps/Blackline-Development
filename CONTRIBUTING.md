@@ -22,11 +22,18 @@ Ideas remain ideas until explicitly approved. Do not create implementation work 
 - Use descriptive branches such as `feature/...`, `fix/...`, `ui/...`, `chore/...`, `maintenance/...` or `security/...`.
 - Never commit routine implementation directly to `production` or `development`.
 - Never create release/version branches.
-- Never merge without explicit approval.
 
-## Pull requests
+## Pull requests and integration authority
 
 Open implementation work as a Draft Pull Request into `development`.
+
+Reviewed development and sandbox integration is Director-pre-authorised. The development operator may mark a PR ready and merge it into `development` or an equivalent sandbox branch without seeking per-merge permission when:
+- the work is covered by an approved work order/release scope;
+- required automated checks pass;
+- known limitations and excluded work are recorded;
+- the merge does not cross into production/live authority.
+
+Production/live promotion remains separately gated and requires explicit Director approval.
 
 Every implementation PR must include:
 - Purpose
@@ -55,7 +62,9 @@ The confirmation checklist must explicitly confirm:
 
 Release versions are controlled. Do not invent or advance a version without approval.
 
-Integration into `development`, release approval, production promotion and verified-live state are separate decisions.
+Development/sandbox integration, release completion, production promotion and verified-live state are separate decisions.
+
+A successful development merge does not imply production approval or a verified deployment.
 
 ## Website commercial safety
 
@@ -76,6 +85,8 @@ Do not commit:
 - unnecessary third-party confidential material.
 
 Do not introduce analytics or telemetry without explicit approval.
+
+Public intake must not request secrets, payment credentials or unnecessary personal documents.
 
 ## Verification
 

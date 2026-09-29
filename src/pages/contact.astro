@@ -1,63 +1,65 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/intake.css';
 
-const startingPoints = [
+const intakeSteps = [
   {
-    title: 'The outcome',
-    copy: 'What should be easier, faster, clearer or newly possible when the work is finished?',
+    title: 'Tell us the outcome',
+    copy: 'Describe what should be easier, clearer or newly possible when the work is finished.',
   },
   {
-    title: 'The people',
-    copy: 'Who will use it, manage it or depend on it? That usually matters more than choosing a technology up front.',
+    title: 'Add what you already know',
+    copy: 'Existing systems, deadlines and constraints help. Anything uncertain can stay marked as unsure.',
   },
   {
-    title: 'The boundaries',
-    copy: 'Deadlines, existing systems, budgets, hosting constraints or anything that must not change belong in the conversation early.',
-  },
-  {
-    title: 'The unknowns',
-    copy: 'You do not need to solve every detail before getting in touch. Uncertainty is useful information when it is made visible.',
-  },
-] as const;
-
-const nextSteps = [
-  {
-    title: 'Review the requirement',
-    copy: 'We start by understanding the result you need rather than immediately turning a short message into a fixed technical solution.',
-  },
-  {
-    title: 'Clarify the gaps',
-    copy: 'Questions are used to remove uncertainty, expose dependencies and separate essential work from optional ideas.',
-  },
-  {
-    title: 'Scope the actual job',
-    copy: 'Once the work is understood, Blackline can establish the base job price and explain what is included and excluded.',
-  },
-  {
-    title: 'Choose the delivery pace',
-    copy: 'If you proceed, Standard, Priority or Accelerated is selected after the base scope is priced. The tier does not redefine the job.',
+    title: 'Review before sending',
+    copy: 'The site prepares a structured email in your own mail app. Nothing is silently submitted or stored by the website.',
   },
 ] as const;
 ---
 
-<BaseLayout title="Contact" description="Start a website, software, automation or managed-service conversation with Blackline Development.">
+<BaseLayout title="Contact" description="Start a general enquiry or prepare a commissioned-development request for Blackline Development.">
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <p class="eyebrow">Start a project</p>
-        <h1>Start with what needs to work better.</h1>
+        <p class="eyebrow">Start here</p>
+        <h1>Choose the simplest way to get in touch.</h1>
         <p class="hero-copy">
-          You do not need a finished specification. A useful first conversation is about the outcome, the people involved, the boundaries and the things that are still uncertain.
+          A quick question does not need a project form. A commissioned build benefits from a little structure. Pick the path that matches what you need.
         </p>
-        <div class="hero-actions">
-          <a class="button" href="mailto:support@blacklinedevelopment.uk">Email Blackline</a>
-          <a class="button secondary" href="/services">Review services</a>
-        </div>
       </div>
-      <aside class="hero-aside" aria-label="Project contact">
-        <strong>One useful message is enough.</strong>
-        <p>Email <a class="inline-link" href="mailto:support@blacklinedevelopment.uk">support@blacklinedevelopment.uk</a> with the outcome you need and anything you already know. Unknowns can stay unknown until discovery.</p>
+      <aside class="hero-aside" aria-label="Contact privacy">
+        <strong>No account required.</strong>
+        <p>This page does not upload files, collect payment details or store your project information on the website.</p>
       </aside>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="contact-path-heading">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Choose a path</p>
+          <h2 id="contact-path-heading">What are you here for?</h2>
+        </div>
+        <p>Both routes reach Blackline Development. The difference is how much structure helps before the first human review.</p>
+      </div>
+
+      <div class="intake-choice-grid">
+        <article class="intake-choice">
+          <span class="card-index">01</span>
+          <h3>General enquiry</h3>
+          <p>Questions about Blackline, an existing service, managed services or something that does not need a full project brief.</p>
+          <a class="button" href="mailto:support@blacklinedevelopment.uk?subject=General%20enquiry">Email Blackline</a>
+        </article>
+
+        <article class="intake-choice">
+          <span class="card-index">02</span>
+          <h3>Commissioned development</h3>
+          <p>Websites, applications, bots, automation or integrations where a structured first message will make scoping easier.</p>
+          <a class="button secondary" href="#project-intake">Prepare a project request</a>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -65,21 +67,19 @@ const nextSteps = [
     <div class="container">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">What to bring</p>
-          <h2>Four things are enough to start.</h2>
+          <p class="eyebrow">Project requests</p>
+          <h2>Useful context without a giant form.</h2>
         </div>
-        <p>
-          The aim is not to make you write Blackline's specification for us. Give us enough context to understand the problem and keep the things you do not know visible.
-        </p>
+        <p>You do not need to know the technology, final scope or exact budget. Give us the outcome and the important boundaries; unknowns are valid information.</p>
       </div>
 
-      <div class="process-list" aria-label="Useful project starting information">
-        {startingPoints.map((item, index) => (
+      <div class="process-list" aria-label="Commission intake process">
+        {intakeSteps.map((step, index) => (
           <article class="process-step">
             <span class="process-number" aria-hidden="true">0{index + 1}</span>
             <div class="process-copy">
-              <h3>{item.title}</h3>
-              <p>{item.copy}</p>
+              <h3>{step.title}</h3>
+              <p>{step.copy}</p>
             </div>
           </article>
         ))}
@@ -87,44 +87,161 @@ const nextSteps = [
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">What happens next</p>
-          <h2>Understanding comes before quoting.</h2>
-        </div>
+  <section class="section" id="project-intake" aria-labelledby="project-intake-heading">
+    <div class="container intake-shell">
+      <div class="intake-intro">
+        <p class="eyebrow">Commission request</p>
+        <h2 id="project-intake-heading">Prepare the first message.</h2>
         <p>
-          A reliable quote needs a reliable scope. Blackline separates discovery, base job pricing and service-tier choice so speed does not get confused with what is actually being built.
+          This is a review request, not an acceptance, quote, payment instruction or booking. Blackline will review the requirement before any scope or price is agreed.
         </p>
+
+        <div class="privacy-note" role="note">
+          <strong>Do not include</strong>
+          <p>Passwords, API keys, access tokens, card/bank information, personal documents or other secrets. Those are never needed for an initial request.</p>
+        </div>
       </div>
 
-      <div class="process-list" aria-label="Blackline project intake steps">
-        {nextSteps.map((item, index) => (
-          <article class="process-step">
-            <span class="process-number" aria-hidden="true">0{index + 1}</span>
-            <div class="process-copy">
-              <h3>{item.title}</h3>
-              <p>{item.copy}</p>
+      <form class="intake-form" id="commission-intake-form">
+        <div class="field">
+          <label for="contact-name">Your name <span class="optional">(optional)</span></label>
+          <input id="contact-name" name="contactName" type="text" autocomplete="name" maxlength="100" />
+        </div>
+
+        <div class="field">
+          <label for="project-type">What best matches the request?</label>
+          <select id="project-type" name="projectType" required>
+            <option value="">Choose one</option>
+            <option>Website</option>
+            <option>Web or desktop application</option>
+            <option>Discord bot</option>
+            <option>Automation or integration</option>
+            <option>Managed service</option>
+            <option>Not sure / needs discussion</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="project-outcome">What should be different when the work is finished?</label>
+          <textarea
+            id="project-outcome"
+            name="outcome"
+            rows="6"
+            maxlength="1200"
+            required
+            aria-describedby="outcome-help"
+          ></textarea>
+          <p class="field-help" id="outcome-help">Describe the result in your own words. Technical terminology is not required.</p>
+        </div>
+
+        <details class="intake-details">
+          <summary>Add more context <span>Optional</span></summary>
+          <div class="details-fields">
+            <div class="field">
+              <label for="current-setup">What exists today? <span class="optional">(optional)</span></label>
+              <textarea id="current-setup" name="currentSetup" rows="4" maxlength="1200"></textarea>
             </div>
-          </article>
-        ))}
-      </div>
+
+            <div class="field">
+              <label for="constraints">Anything that must not change? <span class="optional">(optional)</span></label>
+              <textarea id="constraints" name="constraints" rows="4" maxlength="1200"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="timeline">Is there a timing constraint?</label>
+              <select id="timeline" name="timeline">
+                <option>No fixed date</option>
+                <option>As soon as practical</option>
+                <option>Within a month</option>
+                <option>Within three months</option>
+                <option>Specific deadline — explain in the message</option>
+                <option>Not sure / needs discussion</option>
+              </select>
+            </div>
+          </div>
+        </details>
+
+        <div class="intake-actions">
+          <button class="button" type="submit">Prepare email</button>
+          <p class="field-help">
+            Nothing is sent when you press this button. Your email app opens with a structured draft for you to review and send.
+          </p>
+        </div>
+
+        <p class="form-status" id="intake-status" role="status" aria-live="polite"></p>
+
+        <noscript>
+          <p class="noscript-note">
+            JavaScript is disabled, so the structured draft cannot be prepared automatically.
+            <a class="inline-link" href="mailto:support@blacklinedevelopment.uk?subject=Project%20enquiry">Email support@blacklinedevelopment.uk</a> instead.
+          </p>
+        </noscript>
+      </form>
     </div>
   </section>
 
   <section class="section">
     <div class="container status-band">
       <div>
-        <p class="eyebrow">Ready to talk?</p>
-        <h2>Send the first message.</h2>
+        <p class="eyebrow">After you send</p>
+        <h2>Human review comes next.</h2>
       </div>
       <div>
         <p>
-          Use the business support mailbox for project enquiries. The website does not collect project details, credentials, payment information or documents through an unverified public form.
+          Blackline reviews the request, identifies missing decisions and determines whether more discovery is needed. A request does not create approved implementation work, a final quote, a payment obligation or a delivery date.
         </p>
-        <a class="text-link" href="mailto:support@blacklinedevelopment.uk">support@blacklinedevelopment.uk <span aria-hidden="true">→</span></a>
+        <a class="text-link" href="/commissions">See how commissioned work is priced <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
+
+  <script>
+    const form = document.querySelector('#commission-intake-form');
+    const status = document.querySelector('#intake-status');
+
+    if (form instanceof HTMLFormElement && status instanceof HTMLElement) {
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        if (!form.reportValidity()) {
+          status.textContent = 'Check the required fields before preparing the email.';
+          return;
+        }
+
+        const data = new FormData(form);
+        const projectType = String(data.get('projectType') ?? '').trim();
+        const contactName = String(data.get('contactName') ?? '').trim();
+        const outcome = String(data.get('outcome') ?? '').trim();
+        const currentSetup = String(data.get('currentSetup') ?? '').trim();
+        const constraints = String(data.get('constraints') ?? '').trim();
+        const timeline = String(data.get('timeline') ?? '').trim();
+
+        const lines = [
+          'Blackline Development — commission request',
+          '',
+          `Project type: ${projectType || 'Not sure / needs discussion'}`,
+          `Name: ${contactName || 'Not provided'}`,
+          '',
+          'Desired outcome:',
+          outcome,
+          '',
+          'Current setup:',
+          currentSetup || 'Not provided / needs discussion',
+          '',
+          'Constraints:',
+          constraints || 'Not provided / needs discussion',
+          '',
+          `Timing: ${timeline || 'Not sure / needs discussion'}`,
+          '',
+          'I understand this request is for review and does not itself confirm scope, price, payment, scheduling or implementation.',
+        ];
+
+        const subject = `Project enquiry — ${projectType || 'Needs discussion'}`;
+        const mailto = `mailto:support@blacklinedevelopment.uk?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+
+        status.textContent = 'Opening your email app with a draft. Review it before sending.';
+        window.location.href = mailto;
+      });
+    }
+  </script>
 </BaseLayout>
