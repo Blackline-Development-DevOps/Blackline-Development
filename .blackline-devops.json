@@ -1,0 +1,22 @@
+{
+  "$schema": "https://blacklinedevelopment.uk/schemas/devops/v3/managed-repository-manifest.schema.json",
+  "schemaVersion": 1,
+  "projectId": "blackline-development",
+  "repository": "Blackline-Development-DevOps/Blackline-Development",
+  "controlPlane": {
+    "repository": "Blackline-Development-DevOps/development-operations",
+    "contract": "v3"
+  },
+  "profile": "website",
+  "adapters": {
+    "build": "node24-web"
+  },
+  "references": {
+    "standards": [
+      "basic-site@1.0.0"
+    ],
+    "configuration": [],
+    "domainSafety": [],
+    "privacy": []
+  }
+}
