@@ -11,7 +11,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "test": "astro check",
+    "test": "node --test tests/basic-site-contract.test.mjs && astro check",
     "lint": "eslint ."
   },
   "dependencies": {
