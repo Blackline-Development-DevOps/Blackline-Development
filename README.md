@@ -65,7 +65,7 @@ Server-side submission, retention, rate limiting, idempotency and the governed D
 
 ## Brand assets
 
-The owner-approved primary BL monogram is served from `public/brand/blackline-development/logo-primary-on-dark.jpg` for both the site header and favicon. The Media repository remains the canonical shared-asset source; the website does not fetch private Media content at runtime.
+The owner-approved BL monogram remains the required brand identity. The site currently uses the verified working `brand-mark-dark.svg` header derivative and `favicon.svg` while the full original owner-supplied raster is re-imported and binary-verified. The Media repository remains the canonical shared-asset source.
 
 ## Search and accessibility baseline
 
