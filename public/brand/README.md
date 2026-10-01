@@ -6,7 +6,7 @@ This folder contains the approved public-runtime copies required by the Blacklin
 
 - The owner-selected BL monogram remains the required brand identity.
 - `blackline-development/brand-mark-dark.svg` is temporarily restored for the website header because the imported JPG copy was found to be truncated.
-- `blackline-development/favicon.svg` is temporarily restored for browser favicon use for the same reason.
+- `blackline-development/favicon-16.png` and `favicon-32.png` are direct resized derivatives of the owner-supplied `BD - Logo - Two.jpg` and are the active browser favicons.
 - The broken `logo-primary-on-dark.jpg` must not be referenced until the full original binary is imported and verified.
 
 ## Existing derivatives
