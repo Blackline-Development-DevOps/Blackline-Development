@@ -10,7 +10,7 @@ The governed development line has moved into **v0.2.0 — Client Contact & Commi
 
 - Production branch: `production`
 - Integration branch: `development`
-- Current implementation branch: `feature/client-intake-ux`
+- Current implementation branch: `chore/basic-site-evidence`
 - Current release: **v0.2.0**
 - Production deployment/domain state: verify separately; source state does not prove a live deployment.
 
@@ -80,7 +80,7 @@ The site includes:
 - responsive layouts;
 - progressively disclosed optional intake fields with semantic form labels and live status messaging.
 
-Manual desktop/mobile/keyboard verification remains required before production promotion.
+Manual desktop/mobile/keyboard verification remains required before production promotion. Basic Site Standard evidence is tracked in `docs/standards/basic-site-1.0.0-evidence.md`; automated source-contract checks run as part of `npm test`.
 
 ## Development
 
