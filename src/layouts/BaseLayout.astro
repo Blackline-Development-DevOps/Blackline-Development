@@ -31,7 +31,8 @@ const canonicalUrl = new URL(path, Astro.site ?? Astro.url.origin).toString();
     <meta name="robots" content="index,follow" />
 
     <link rel="canonical" href={canonicalUrl} />
-    <link rel="icon" type="image/svg+xml" href="/brand/blackline-development/favicon.svg" />
+    <link rel="icon" type="image/jpeg" href="/brand/blackline-development/logo-primary-on-dark.jpg" />
+    <link rel="apple-touch-icon" href="/brand/blackline-development/logo-primary-on-dark.jpg" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
@@ -53,7 +54,7 @@ const canonicalUrl = new URL(path, Astro.site ?? Astro.url.origin).toString();
         <a class="wordmark" href="/" aria-label="Blackline Development home">
           <img
             class="wordmark-mark"
-            src="/brand/blackline-development/brand-mark-dark.svg"
+            src="/brand/blackline-development/logo-primary-on-dark.jpg"
             width="36"
             height="36"
             alt=""

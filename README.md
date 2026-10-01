@@ -10,7 +10,7 @@ The governed development line has moved into **v0.2.0 — Client Contact & Commi
 
 - Production branch: `production`
 - Integration branch: `development`
-- Current implementation branch: `chore/basic-site-evidence`
+- Current implementation branch: `ui/primary-brand-logo`
 - Current release: **v0.2.0**
 - Production deployment/domain state: verify separately; source state does not prove a live deployment.
 
@@ -65,7 +65,7 @@ Server-side submission, retention, rate limiting, idempotency and the governed D
 
 ## Brand assets
 
-Approved Blackline Development public derivatives live under `public/brand/`. Canonical Media masters remain private and are not fetched at runtime.
+The owner-approved primary BL monogram is served from `public/brand/blackline-development/logo-primary-on-dark.jpg` for both the site header and favicon. The Media repository remains the canonical shared-asset source; the website does not fetch private Media content at runtime.
 
 ## Search and accessibility baseline
 
@@ -84,7 +84,7 @@ Manual desktop/mobile/keyboard verification remains required before production p
 
 ## Development
 
-Requires Node.js 22.12.0 or newer.
+Requires Node.js 24.16.0 or newer.
 
 ```bash
 npm ci
