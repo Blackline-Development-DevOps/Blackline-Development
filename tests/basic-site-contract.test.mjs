@@ -31,7 +31,9 @@ test('navigation, keyboard and metadata baseline remains present', async () => {
   assert.match(layout, /aria-current=\{path === item\.href \? 'page' : undefined\}/);
   assert.match(layout, /rel="canonical"/);
   assert.match(layout, /property="og:title"/);
-  assert.match(layout, /name="twitter:card"/);\n  assert.match(layout, /logo-primary-on-dark\\.jpg/);\n  assert.doesNotMatch(layout, /brand-mark-dark\\.svg|favicon\\.svg/);
+  assert.match(layout, /name="twitter:card"/);
+  assert.match(layout, /logo-primary-on-dark\.jpg/);
+  assert.doesNotMatch(layout, /brand-mark-dark\.svg|favicon\.svg/);
   assert.match(accessibility, /\.skip-link:focus/);
   assert.match(global, /:focus-visible/);
   assert.match(global, /prefers-reduced-motion: reduce/);
