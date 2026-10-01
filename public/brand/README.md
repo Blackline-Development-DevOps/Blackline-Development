@@ -4,9 +4,10 @@ This folder contains the approved public-runtime copies required by the Blacklin
 
 ## Primary mark
 
-- `blackline-development/logo-primary-on-dark.jpg` — owner-selected primary BL monogram supplied on 2026-10-01 as `BD - Logo - Two.jpg`.
-- This is the required website header logo and favicon source.
-- Do not substitute generated, redrawn, simplified or reinterpreted versions of the BL mark without a new explicit brand decision.
+- The owner-selected BL monogram remains the required brand identity.
+- `blackline-development/brand-mark-dark.svg` is temporarily restored for the website header because the imported JPG copy was found to be truncated.
+- `blackline-development/favicon.svg` is temporarily restored for browser favicon use for the same reason.
+- The broken `logo-primary-on-dark.jpg` must not be referenced until the full original binary is imported and verified.
 
 ## Existing derivatives
 
