@@ -31,8 +31,9 @@ const canonicalUrl = new URL(path, Astro.site ?? Astro.url.origin).toString();
     <meta name="robots" content="index,follow" />
 
     <link rel="canonical" href={canonicalUrl} />
-    <link rel="icon" type="image/svg+xml" href="/brand/blackline-development/favicon.svg" />
-    <link rel="apple-touch-icon" href="/brand/blackline-development/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/blackline-development/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/brand/blackline-development/favicon-16.png" />
+    
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
