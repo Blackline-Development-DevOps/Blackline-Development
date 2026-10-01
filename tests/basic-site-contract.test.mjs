@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
 import test from 'node:test';
 
 const root = process.cwd();
