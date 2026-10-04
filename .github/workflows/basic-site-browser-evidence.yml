@@ -1,0 +1,114 @@
+name: Basic Site browser evidence
+
+on:
+  pull_request:
+    branches:
+      - development
+
+permissions:
+  contents: read
+
+jobs:
+  browser-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run repository verification
+        run: |
+          npm test
+          npm run check
+          npm run lint
+          npm run build
+
+      - name: Capture browser evidence
+        shell: bash
+        run: |
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [[ -z "$chrome" ]]; then
+            echo 'A Chromium-compatible browser is required for Basic Site browser evidence' >&2
+            exit 1
+          fi
+
+          mkdir -p "$RUNNER_TEMP/basic-site-evidence"
+          python3 -m http.server 4173 --directory dist >"$RUNNER_TEMP/basic-site-server.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then
+              break
+            fi
+            if [[ "$attempt" == '20' ]]; then
+              cat "$RUNNER_TEMP/basic-site-server.log" >&2
+              exit 1
+            fi
+            sleep 1
+          done
+
+          routes=(
+            "home:/"
+            "services:/services/"
+            "commissions:/commissions/"
+            "managed-services:/managed-services/"
+            "work:/work/"
+            "about:/about/"
+            "contact:/contact/"
+            "not-found:/404.html"
+          )
+          sizes=(
+            "desktop:1440,1200"
+            "tablet:900,1100"
+            "mobile:390,844"
+            "small-window:320,700"
+          )
+
+          for route in "${routes[@]}"; do
+            name="${route%%:*}"
+            url_path="${route#*:}"
+            curl --fail --silent "http://127.0.0.1:4173${url_path}" >"$RUNNER_TEMP/basic-site-evidence/${name}.html"
+            for size in "${sizes[@]}"; do
+              size_name="${size%%:*}"
+              dimensions="${size#*:}"
+              "$chrome" \
+                --headless=new \
+                --no-sandbox \
+                --disable-gpu \
+                --hide-scrollbars \
+                --force-device-scale-factor=1 \
+                --window-size="$dimensions" \
+                --screenshot="$RUNNER_TEMP/basic-site-evidence/${name}-${size_name}.png" \
+                "http://127.0.0.1:4173${url_path}"
+            done
+          done
+
+          "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-gpu \
+            --dump-dom \
+            http://127.0.0.1:4173/contact/ \
+            >"$RUNNER_TEMP/basic-site-evidence/contact-rendered-dom.html"
+
+          cp "$RUNNER_TEMP/basic-site-server.log" "$RUNNER_TEMP/basic-site-evidence/server.log"
+
+      - name: Upload browser evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: basic-site-browser-evidence
+          path: ${{ runner.temp }}/basic-site-evidence
+          if-no-files-found: error
+          retention-days: 7
