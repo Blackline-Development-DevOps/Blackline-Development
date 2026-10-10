@@ -72,7 +72,20 @@ try {
     await key('Tab', 'Tab', 9, 8); // Shift+Tab should reverse from current focus
     const reverse = await evaluate('({tag:document.activeElement?.tagName, href:document.activeElement?.getAttribute("href")||""})');
     assert.deepEqual(reverse, { tag: focus[6].tag, href: focus[6].href }, 'Shift+Tab must return to previous control');
-    cases.push({ route, width, firstEight: focus, reverse, accessibilityTree: axEvidence, passed: true });
+    // Exercise the skip-link destination using browser keyboard input.
+    await send('Page.navigate', { url: base + route });
+    for(let i=0;i<50;i++){
+      if(await evaluate('document.readyState==="complete" && !!document.querySelector(".skip-link")'))break;
+      await new Promise(resolve=>setTimeout(resolve,100));
+      if(i===49)throw Error('Skip-link navigation readiness timeout');
+    }
+    await key('Tab','Tab',9);
+    const focusedSkip=await evaluate('document.activeElement?.getAttribute("href")==="#main-content"');
+    assert.equal(focusedSkip,true,'Skip link was not focused before activation');
+    await key('Enter','Enter',13);
+    const skipDestination=await evaluate('({hash:location.hash,activeId:document.activeElement?.id||""})');
+    assert.equal(skipDestination.hash,'#main-content','Skip link activation failed to navigate to main content');
+    cases.push({ route, width, firstEight: focus, reverse, skipDestination, accessibilityTree: axEvidence, passed: true });
   }
   const report = { schemaVersion: 1, method: 'Chrome DevTools Protocol Input.dispatchKeyEvent', cases, passed: true, note: 'Trusted browser keyboard input plus Chromium accessibility-tree landmark/control names; not actual assistive-technology / screen-reader acceptance' };
   if (output) await writeFile(output, JSON.stringify(report, null, 2));
