@@ -49,6 +49,18 @@ try {
       await new Promise(resolve => setTimeout(resolve, 100));
       if (i === 49) throw Error('Page readiness timeout ' + route);
     }
+    // Inspect Chromium's accessibility tree, rather than DOM attributes alone.
+    const axTree = (await send('Accessibility.getFullAXTree')).nodes;
+    const activeAx = axTree.filter(node => !node.ignored);
+    const roleName = node => String(node.role?.value || '');
+    const accessibleName = node => String(node.name?.value || '').trim();
+    const landmarks = activeAx.filter(node => ['navigation', 'main', 'banner', 'contentinfo'].includes(roleName(node)));
+    assert.ok(landmarks.some(node => roleName(node)==='navigation' && accessibleName(node)), 'Named navigation missing from accessibility tree: ' + route);
+    assert.ok(landmarks.some(node => roleName(node)==='main'), 'Main landmark missing from accessibility tree: ' + route);
+    const userInputs = activeAx.filter(node => ['textbox','combobox','listbox','checkbox','radio'].includes(roleName(node)));
+    const unnamedInputs = userInputs.filter(node => !accessibleName(node)).map(node => ({ role: roleName(node), nodeId: node.nodeId }));
+    assert.equal(unnamedInputs.length,0,'Unnamed interactive controls in accessibility tree: '+JSON.stringify(unnamedInputs));
+    const axEvidence={landmarks:landmarks.map(node => ({role:roleName(node),name:accessibleName(node)})),namedInputCount:userInputs.length};
     await evaluate('document.activeElement?.blur(); document.body.focus(); true');
     const focus = [];
     for (let i = 0; i < 8; i++) {
@@ -60,9 +72,9 @@ try {
     await key('Tab', 'Tab', 9, 8); // Shift+Tab should reverse from current focus
     const reverse = await evaluate('({tag:document.activeElement?.tagName, href:document.activeElement?.getAttribute("href")||""})');
     assert.deepEqual(reverse, { tag: focus[6].tag, href: focus[6].href }, 'Shift+Tab must return to previous control');
-    cases.push({ route, width, firstEight: focus, reverse, passed: true });
+    cases.push({ route, width, firstEight: focus, reverse, accessibilityTree: axEvidence, passed: true });
   }
-  const report = { schemaVersion: 1, method: 'Chrome DevTools Protocol Input.dispatchKeyEvent', cases, passed: true, note: 'Trusted browser keyboard input, not assistive-technology / manual screen-reader acceptance' };
+  const report = { schemaVersion: 1, method: 'Chrome DevTools Protocol Input.dispatchKeyEvent', cases, passed: true, note: 'Trusted browser keyboard input plus Chromium accessibility-tree landmark/control names; not actual assistive-technology / screen-reader acceptance' };
   if (output) await writeFile(output, JSON.stringify(report, null, 2));
   console.log('Keyboard navigation passed ' + cases.length + ' viewport-route combinations');
 } finally {
