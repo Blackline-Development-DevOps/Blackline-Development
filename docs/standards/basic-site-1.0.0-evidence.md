@@ -47,3 +47,9 @@ The protected Basic Site requirements are not excepted.
 
 The existing browser workflow captures 9 public routes at 320, 390, 900 and 1440px and runs `scripts/basic-site-browser-audit.html` against the built site. Run [38027188538](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38027188538) passed, including 36/36 structural runtime checks. Its seven-day GitHub Actions artifact includes `runtime-audit.json`, individual screenshots and route HTML. Passing this audit does not establish screen-reader compatibility or visually measured contrast.
 
+
+## Expanded rendered-accessibility checks — 2026-10-10
+
+- Exact candidate `ab7a352db2cca686394edc38428c3d3ac358cffe`: [Foundation CI run 38071492262](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38071492262) and [Chromium browser run 38071492300](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38071492300) **passed**.
+- `scripts/basic-site-browser-audit.html` now rejects unnamed links/buttons, form controls without accessible labels and images missing explicit layout dimensions, alongside the existing nine-route/four-width layout and form checks. The browser workflow fails if any check reports problems.
+- Browser-level structural checks do **not** constitute a manual screen-reader, real Tab-key journey, calibrated contrast or performance audit. These remain unaccepted pending genuine verification.
