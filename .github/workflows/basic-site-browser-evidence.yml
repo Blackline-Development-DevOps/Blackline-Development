@@ -148,6 +148,33 @@ jobs:
             node scripts/basic-site-keyboard-cdp.mjs
           test -s "$RUNNER_TEMP/basic-site-evidence/keyboard-cdp.json"
 
+          # Collect reproducible lab Lighthouse reports; results are evidence, not field Core Web Vitals.
+          for route in home contact; do
+            case "$route" in
+              home) audit_path="/" ;;
+              contact) audit_path="/contact/" ;;
+            esac
+            npx --yes lighthouse@12.8.2 "http://127.0.0.1:4173$audit_path" \
+              --chrome-path="$chrome" \
+              --chrome-flags="--headless=new --no-sandbox --disable-gpu" \
+              --only-categories=performance,accessibility,best-practices,seo \
+              --quiet --output=json \
+              --output-path="$RUNNER_TEMP/basic-site-evidence/lighthouse-$route.json"
+          done
+          node --input-type=module -e '
+            import { readFile, writeFile } from "node:fs/promises";
+            const names = ["home", "contact"];
+            const reports = [];
+            for (const name of names) {
+              const report = JSON.parse(await readFile(process.env.RUNNER_TEMP + "/basic-site-evidence/lighthouse-" + name + ".json", "utf8"));
+              const scores = Object.fromEntries(Object.entries(report.categories).map(([id, category]) => [id, category.score]));
+              if (!["performance", "accessibility", "best-practices", "seo"].every(id => typeof scores[id] === "number")) throw Error("Incomplete Lighthouse scores: " + name);
+              reports.push({ name, url: report.finalDisplayedUrl, scores, largestContentfulPaintMs: report.audits["largest-contentful-paint"]?.numericValue ?? null, cumulativeLayoutShift: report.audits["cumulative-layout-shift"]?.numericValue ?? null });
+            }
+            await writeFile(process.env.RUNNER_TEMP + "/basic-site-evidence/lighthouse-summary.json", JSON.stringify({ method: "Lighthouse synthetic lab", reports, note: "Not a real-user field metric or manual accessibility acceptance" }, null, 2));
+            console.log(JSON.stringify(reports));
+          '
+
           cp "$RUNNER_TEMP/basic-site-server.log" "$RUNNER_TEMP/basic-site-evidence/server.log"
 
       - name: Upload browser evidence
