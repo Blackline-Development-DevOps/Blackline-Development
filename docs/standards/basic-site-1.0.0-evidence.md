@@ -8,7 +8,7 @@ This ledger records only evidence that exists in this repository. It does not cl
 
 | Evidence key | State | Repository evidence |
 | --- | --- | --- |
-| responsive-matrix | Partial | Responsive breakpoints are implemented in `src/styles/global.css` and `src/styles/intake.css`; automated presence checks run in `tests/basic-site-contract.test.mjs`. Manual browser/device matrix remains required. |
+| responsive-matrix | Partial | Chromium run [38026733255](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38026733255) captured 9 routes × 4 viewports (1440, 900, 390 and 320px), verified every route HTML and PNG file, and visually reviewed the opening screens. The clipped 320px Services heading was corrected in `src/styles/global.css`. Full-page overflow and interaction QA remain outstanding. |
 | navigation-review | Passed | Shared primary navigation, current-page state, skip link and clear primary action are implemented in `src/layouts/BaseLayout.astro` and checked automatically. |
 | state-matrix | Partial | Commission intake has required-field error messaging, draft-opening status and no-JavaScript fallback. Full loading/empty/success/error evidence for future server-backed flows remains out of scope until those flows exist. |
 | accessibility-review | Partial | Semantic navigation, labelled form controls, live status, skip link, reduced-motion handling and focus styles are source-verified. Manual screen-reader/contrast review remains required. |
@@ -17,12 +17,12 @@ This ledger records only evidence that exists in this repository. It does not cl
 | secret-scan | Passed | CI test scans public source/assets for common committed credential signatures. This supplements, not replaces, GitHub/provider secret scanning. |
 | environment-review | Passed | Current public site is static output and does not require runtime secrets for the implemented intake flow; `astro.config.mjs` contains no secret-bearing configuration. |
 | privacy-review | Passed | Automated checks reject known analytics hooks in `src/` and `public/`; current intake uses local email drafting and does not persist browser data. |
-| content-review | Partial | Real support contact and service boundaries are present. A dedicated public privacy/legal surface should be reviewed before final release completion. |
+| content-review | Partial | Real support contact and service boundaries are present. `src/pages/privacy.astro` now gives a narrowly scoped explanation of local email drafting and subsequent email handling, visible in run 38026733255. Final legal/controller wording and discoverable shared navigation link are still under review. |
 | seo-review | Passed | Canonical URLs, descriptions, Open Graph/Twitter metadata, robots and sitemap are implemented and contract-tested. |
 | performance-review | Partial | Static Astro output, bounded local assets and explicit image dimensions reduce obvious instability; formal performance/manual browser evidence remains required. |
 | error-path-tests | Passed | Deliberate 404 content and safe intake validation/no-JavaScript recovery are checked automatically. |
 | automated-checks | Passed | Foundation CI runs `npm ci`, `npm test`, `npm run check`, `npm run lint` and `npm run build`. |
-| manual-verification | Pending | Desktop/mobile/small-window, keyboard, screen-reader and contrast review must be recorded before completion. |
+| manual-verification | Partial | Manually reviewed the 9 × 4 first-viewport screenshots from browser evidence run 38026733255 and confirmed corrected 320px heading legibility. Full-page visual, keyboard tab order, contrast measurements and assistive-technology review still require recorded evidence. |
 | delivery-docs | Passed | `README.md`, `CONTRIBUTING.md`, `docs/architecture.md`, `docs/intake-transport-contract.md` and `docs/devops-v3-migration.md` document current delivery and authority boundaries. |
 
 ## Protected requirements
@@ -37,8 +37,8 @@ The protected Basic Site requirements are not excepted.
 
 ## Remaining gates
 
-1. Record manual responsive, keyboard, screen-reader and contrast verification.
-2. Review whether a dedicated public privacy/legal page is required for the current launch surface and add it if applicable.
-3. Activate the centrally approved public Dev Ops v3 relay only through its separately owner-gated live deployment process.
+1. Complete full-page responsive overflow, keyboard, screen-reader and contrast verification using the exact PR #61 candidate; initial 9-route screenshot inspection is documented above.
+2. Confirm controller/legal wording for the newly added privacy page and link it from the shared navigation/footer before claiming public content acceptance.
+3. Preserve the already deployed OIDC-authenticated automatic Dev Ops revision relay and its mandatory file/bundle hash checks.
 4. Run exact-candidate central enforcement against this repository through that live relay.
 5. Mark #53 `v3-managed` only after central registry, effective contract, portfolio/project projection and enforcement health all agree.
