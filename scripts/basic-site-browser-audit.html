@@ -52,12 +52,20 @@
   row.unlabelledButtons=[...doc.querySelectorAll('button')].filter(el=>!(el.textContent||'').trim()&&!el.getAttribute('aria-label')).length;
   row.unlabelledLinks=[...doc.querySelectorAll('a')].filter(el=>!(el.textContent||'').trim()&&!el.getAttribute('aria-label')&&!el.querySelector('img[alt]:not([alt=""])')).length;
   row.imagesMissingDimensions=[...doc.images].filter(el=>!(el.getAttribute('width')&&el.getAttribute('height'))).map(el=>el.getAttribute('src'));
-  row.pageTransferBytes=performance.getEntriesByType('resource').filter(entry=>entry.name.startsWith(win.location.origin)).reduce((sum,entry)=>sum+(entry.transferSize||0),0);
+  const resourceEntries=win.performance.getEntriesByType('resource');
+  row.resourceCount=resourceEntries.length;
+  row.resourceTransferBytes=resourceEntries.reduce((sum,entry)=>sum+(entry.transferSize||0),0);
+  row.imageFailures=[...doc.images].filter(img=>!img.complete||img.naturalWidth===0).map(img=>img.currentSrc||img.src);
+  // Transfer sizes are browser observations, not Lighthouse or Core Web Vitals.
+  // A generous bound catches unexpectedly huge assets without claiming field performance.
+  row.resourceBudgetBytes=5*1024*1024;
   row.errors=[];
   if(row.unlabelledControls.length)row.errors.push('unlabelled-form-control');
   if(row.unlabelledButtons)row.errors.push('unlabelled-button');
   if(row.unlabelledLinks)row.errors.push('unlabelled-link');
   if(row.imagesMissingDimensions.length)row.errors.push('image-without-dimensions');
+  if(row.imageFailures.length)row.errors.push('image-load-failed');
+  if(row.resourceTransferBytes>row.resourceBudgetBytes)row.errors.push('resource-transfer-budget-exceeded');
   if(!row.title)row.errors.push('missing-title');
   if(row.documentWidth>width+2)row.errors.push('document-overflow');
   if(!row.oneHeading)row.errors.push('h1-count');
@@ -69,7 +77,7 @@
   checks.push(row);
   if(row.errors.length)problems.push({route,width,errors:row.errors});
  }
- const report={schemaVersion:1,runType:'chromium-iframe-layout-and-form-contract',routes:routes.length,widths,checks,problems,passed:!problems.length,note:'Structural/runtime browser assertions; does not replace screen-reader, manual keyboard or full-page visual review.'};
+ const report={schemaVersion:1,runType:'chromium-iframe-layout-and-form-contract',routes:routes.length,widths,checks,problems,passed:!problems.length,note:'Structural/runtime browser assertions and rough transfer budget; does not replace Lighthouse, screen-reader, real keyboard traversal or full-page visual review.'};
  document.getElementById('result').textContent='BASIC_SITE_AUDIT_BEGIN\n'+JSON.stringify(report)+'\nBASIC_SITE_AUDIT_END';
 })().catch(error=>{document.getElementById('result').textContent='BASIC_SITE_AUDIT_ERROR '+String(error?.stack||error);});
 </script></body></html>
