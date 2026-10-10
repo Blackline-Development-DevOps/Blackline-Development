@@ -44,6 +44,8 @@ jobs:
           fi
 
           mkdir -p "$RUNNER_TEMP/basic-site-evidence"
+          BUILD_EVIDENCE_PATH="$RUNNER_TEMP/basic-site-evidence/build-asset-budget.json" \
+            node scripts/basic-site-build-budget.mjs
           python3 -m http.server 4173 --directory dist >"$RUNNER_TEMP/basic-site-server.log" 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
