@@ -79,13 +79,21 @@ const canonicalUrl = new URL(path, Astro.site ?? Astro.url.origin).toString();
 
     <footer class="site-footer">
       <div class="container footer-grid">
-        <div>
-          <strong>Blackline Development</strong><br />
-          Software, websites, automation and managed services.
+        <div class="footer-intro">
+          <strong>Blackline Development</strong>
+          <p>Software, websites, automation and managed services.</p>
+          <a class="footer-action" href="/contact">Discuss your project <span aria-hidden="true">→</span></a>
         </div>
-        <div>
+        <nav class="footer-navigation" aria-label="Footer navigation">
+          <a href="/services">Services</a>
+          <a href="/commissions">Commissions</a>
+          <a href="/managed-services">Managed services</a>
+          <a href="/work">Our work</a>
+          <a href="/about">About</a>
+        </nav>
+        <p class="footer-disclaimer">
           Pricing shown on this site is subject to the current Blackline Development catalogue and quote terms.
-        </div>
+        </p>
       </div>
     </footer>
   </body>
