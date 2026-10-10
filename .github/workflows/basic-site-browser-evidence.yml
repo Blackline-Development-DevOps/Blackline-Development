@@ -149,10 +149,17 @@ jobs:
           test -s "$RUNNER_TEMP/basic-site-evidence/keyboard-cdp.json"
 
           # Collect reproducible lab Lighthouse reports; results are evidence, not field Core Web Vitals.
-          for route in home contact; do
+          for route in home services commissions managed-services work about contact privacy not-found; do
             case "$route" in
               home) audit_path="/" ;;
               contact) audit_path="/contact/" ;;
+              services) audit_path="/services/" ;;
+              commissions) audit_path="/commissions/" ;;
+              managed-services) audit_path="/managed-services/" ;;
+              work) audit_path="/work/" ;;
+              about) audit_path="/about/" ;;
+              privacy) audit_path="/privacy/" ;;
+              not-found) audit_path="/404.html" ;;
             esac
             npx --yes lighthouse@12.8.2 "http://127.0.0.1:4173$audit_path" \
               --chrome-path="$chrome" \
@@ -163,7 +170,7 @@ jobs:
           done
           node --input-type=module -e '
             import { readFile, writeFile } from "node:fs/promises";
-            const names = ["home", "contact"];
+            const names = ["home", "services", "commissions", "managed-services", "work", "about", "contact", "privacy", "not-found"];
             const reports = [];
             for (const name of names) {
               const report = JSON.parse(await readFile(process.env.RUNNER_TEMP + "/basic-site-evidence/lighthouse-" + name + ".json", "utf8"));
