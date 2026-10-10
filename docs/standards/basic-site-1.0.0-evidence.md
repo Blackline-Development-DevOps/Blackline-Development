@@ -2,17 +2,17 @@
 
 Work order: #53  
 Standard: `basic-site@1.0.0`  
-Branch under evidence review: `chore/basic-site-evidence`
+Branch under evidence review: `migration/devops-v3-public-adoption`
 
 This ledger records only evidence that exists in this repository. It does not claim manual checks that have not been performed and it does not claim Dev Ops v3 `Managed` status before the live central relay verifies an exact candidate.
 
 | Evidence key | State | Repository evidence |
 | --- | --- | --- |
-| responsive-matrix | Partial | Chromium run [38026733255](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38026733255) captured 9 routes × 4 viewports (1440, 900, 390 and 320px), verified every route HTML and PNG file, and visually reviewed the opening screens. The clipped 320px Services heading was corrected in `src/styles/global.css`. Full-page overflow and interaction QA remain outstanding. |
+| responsive-matrix | Partial | Chromium run [38026733255](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38026733255) captured 9 routes × 4 viewports (1440, 900, 390 and 320px), verified every route HTML and PNG file, and visually reviewed the opening screens. The clipped 320px Services heading was corrected in `src/styles/global.css`. Chromium runtime audit run 38027188538 passed 36 of 36 checks for document overflow, clipped hero headings, landmarks, anchors, skip-link focus and contact validation. Manual full-page inspection remains outstanding. |
 | navigation-review | Passed | Shared primary navigation, current-page state, skip link and clear primary action are implemented in `src/layouts/BaseLayout.astro` and checked automatically. |
 | state-matrix | Partial | Commission intake has required-field error messaging, draft-opening status and no-JavaScript fallback. Full loading/empty/success/error evidence for future server-backed flows remains out of scope until those flows exist. |
 | accessibility-review | Partial | Semantic navigation, labelled form controls, live status, skip link, reduced-motion handling and focus styles are source-verified. Manual screen-reader/contrast review remains required. |
-| keyboard-review | Partial | Focus-visible styles, skip link and native form/details controls are source-verified. Manual end-to-end keyboard traversal remains required. |
+| keyboard-review | Partial | Focus-visible styles, skip link and native form/details controls are source-verified. Chromium runtime audit confirmed programmatic skip-link focus; manual Tab/Shift+Tab traversal remains required. |
 | validation-tests | Passed | Bounded required fields and maximum lengths are checked by `tests/basic-site-contract.test.mjs`; browser validation remains fail-safe and no server-side submission is claimed. |
 | secret-scan | Passed | CI test scans public source/assets for common committed credential signatures. This supplements, not replaces, GitHub/provider secret scanning. |
 | environment-review | Passed | Current public site is static output and does not require runtime secrets for the implemented intake flow; `astro.config.mjs` contains no secret-bearing configuration. |
@@ -22,7 +22,7 @@ This ledger records only evidence that exists in this repository. It does not cl
 | performance-review | Partial | Static Astro output, bounded local assets and explicit image dimensions reduce obvious instability; formal performance/manual browser evidence remains required. |
 | error-path-tests | Passed | Deliberate 404 content and safe intake validation/no-JavaScript recovery are checked automatically. |
 | automated-checks | Passed | Foundation CI runs `npm ci`, `npm test`, `npm run check`, `npm run lint` and `npm run build`. |
-| manual-verification | Partial | Manually reviewed the 9 × 4 first-viewport screenshots from browser evidence run 38026733255 and confirmed corrected 320px heading legibility. Full-page visual, keyboard tab order, contrast measurements and assistive-technology review still require recorded evidence. |
+| manual-verification | Partial | Manually reviewed the 9 × 4 first-viewport screenshots from browser evidence run 38026733255 and confirmed corrected 320px heading legibility. The 36-case Chromium structural audit passed; full-page visual, keyboard tab order, contrast measurements and assistive-technology review still require recorded evidence. |
 | delivery-docs | Passed | `README.md`, `CONTRIBUTING.md`, `docs/architecture.md`, `docs/intake-transport-contract.md` and `docs/devops-v3-migration.md` document current delivery and authority boundaries. |
 
 ## Protected requirements
@@ -42,3 +42,8 @@ The protected Basic Site requirements are not excepted.
 3. Preserve the already deployed OIDC-authenticated automatic Dev Ops revision relay and its mandatory file/bundle hash checks.
 4. Run exact-candidate central enforcement against this repository through that live relay.
 5. Mark #53 `v3-managed` only after central registry, effective contract, portfolio/project projection and enforcement health all agree.
+
+## Additional repeatable runtime acceptance evidence
+
+The existing browser workflow captures 9 public routes at 320, 390, 900 and 1440px and runs `scripts/basic-site-browser-audit.html` against the built site. Run [38027188538](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38027188538) passed, including 36/36 structural runtime checks. Its seven-day GitHub Actions artifact includes `runtime-audit.json`, individual screenshots and route HTML. Passing this audit does not establish screen-reader compatibility or visually measured contrast.
+
