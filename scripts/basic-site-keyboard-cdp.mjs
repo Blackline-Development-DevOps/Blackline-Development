@@ -90,6 +90,7 @@ try {
       const located = await evaluate('(()=>{const d=document.querySelector("details.intake-details");if(!d)return false;d.open=false;d.querySelector("summary").focus();return document.activeElement===d.querySelector("summary")})()');
       assert.ok(located,'Contact disclosure summary must receive keyboard focus');
       await key('Enter','Enter',13);
+      await new Promise(resolve=>setTimeout(resolve,120));
       const opened=await evaluate('document.querySelector("details.intake-details")?.open===true');
       assert.ok(opened,'Enter must open Contact optional-fields disclosure');
       await key('Tab','Tab',9);
