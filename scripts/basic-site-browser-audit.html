@@ -42,7 +42,22 @@
     row.statusLive=doc.querySelector('#intake-status')?.getAttribute('aria-live')==='polite';
    }
   }
+  // Verify common accessibility contracts against rendered DOM, not CSS tokens.
+  const controls=[...doc.querySelectorAll('input:not([type="hidden"]),select,textarea')];
+  row.unlabelledControls=controls.filter(el=>{
+   const id=el.id;
+   const labelled=id&&[...doc.querySelectorAll('label[for]')].some(label=>label.getAttribute('for')===id);
+   return !labelled&&!el.closest('label')&&!el.getAttribute('aria-label')&&!el.getAttribute('aria-labelledby');
+  }).map(el=>el.name||el.tagName);
+  row.unlabelledButtons=[...doc.querySelectorAll('button')].filter(el=>!(el.textContent||'').trim()&&!el.getAttribute('aria-label')).length;
+  row.unlabelledLinks=[...doc.querySelectorAll('a')].filter(el=>!(el.textContent||'').trim()&&!el.getAttribute('aria-label')&&!el.querySelector('img[alt]:not([alt=""])')).length;
+  row.imagesMissingDimensions=[...doc.images].filter(el=>!(el.getAttribute('width')&&el.getAttribute('height'))).map(el=>el.getAttribute('src'));
+  row.pageTransferBytes=performance.getEntriesByType('resource').filter(entry=>entry.name.startsWith(win.location.origin)).reduce((sum,entry)=>sum+(entry.transferSize||0),0);
   row.errors=[];
+  if(row.unlabelledControls.length)row.errors.push('unlabelled-form-control');
+  if(row.unlabelledButtons)row.errors.push('unlabelled-button');
+  if(row.unlabelledLinks)row.errors.push('unlabelled-link');
+  if(row.imagesMissingDimensions.length)row.errors.push('image-without-dimensions');
   if(!row.title)row.errors.push('missing-title');
   if(row.documentWidth>width+2)row.errors.push('document-overflow');
   if(!row.oneHeading)row.errors.push('h1-count');
