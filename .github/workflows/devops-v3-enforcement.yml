@@ -27,14 +27,9 @@ jobs:
         shell: bash
         env:
           RELAY_URL: ${{ vars.DEVOPS_PUBLIC_ENFORCEMENT_URL }}
-          EXPECTED_REVISION: ${{ vars.DEVOPS_PUBLIC_ENFORCEMENT_REVISION }}
         run: |
           if [[ ! "$RELAY_URL" =~ ^https:// ]]; then
             echo 'DEVOPS_PUBLIC_ENFORCEMENT_URL must be a configured HTTPS repository variable' >&2
-            exit 1
-          fi
-          if [[ ! "$EXPECTED_REVISION" =~ ^[a-f0-9]{40}$ ]]; then
-            echo 'DEVOPS_PUBLIC_ENFORCEMENT_REVISION must be a configured exact 40-character control-plane SHA' >&2
             exit 1
           fi
 
@@ -82,16 +77,12 @@ jobs:
         shell: bash
         env:
           RELAY_URL: ${{ vars.DEVOPS_PUBLIC_ENFORCEMENT_URL }}
-          EXPECTED_REVISION: ${{ vars.DEVOPS_PUBLIC_ENFORCEMENT_REVISION }}
         run: |
           oidc_response="$(curl --fail --silent --show-error \
             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
             "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=blackline-devops-v3-public-enforcement")"
           oidc_token="$(jq -er '.value' <<< "$oidc_response")"
-          payload="$(jq -cn \
-            --arg repository "$GITHUB_REPOSITORY" \
-            --arg expectedRevision "$EXPECTED_REVISION" \
-            '{repository:$repository,expectedRevision:$expectedRevision}')"
+          payload="$(jq -cn --arg repository "$GITHUB_REPOSITORY" '{repository:$repository,revisionMode:"deployed"}')"
           endpoint="${RELAY_URL%/}/v3/enforcement/bootstrap"
           curl --fail --silent --show-error \
             --request POST \
@@ -101,16 +92,14 @@ jobs:
             --output "$RUNNER_TEMP/devops-v3-bootstrap.json" \
             "$endpoint"
           jq -e \
-            --arg revision "$EXPECTED_REVISION" \
-            '.ok == true and .bundle.schemaVersion == 1 and .bundle.controlPlaneRevision == $revision and (.bundle.files | type == "array")' \
+            '.ok == true and .bundle.schemaVersion == 1 and (.bundle.controlPlaneRevision | test("^[a-f0-9]{40}$")) and (.bundle.files | type == "array")' \
             "$RUNNER_TEMP/devops-v3-bootstrap.json" >/dev/null
-          echo "control-plane-revision=$EXPECTED_REVISION" >> "$GITHUB_OUTPUT"
+          echo "control-plane-revision=$(jq -r '.bundle.controlPlaneRevision' "$RUNNER_TEMP/devops-v3-bootstrap.json")" >> "$GITHUB_OUTPUT"
           echo "bundle-sha256=$(jq -r '.bundle.bundleSha256' "$RUNNER_TEMP/devops-v3-bootstrap.json")" >> "$GITHUB_OUTPUT"
 
       - name: Verify and reconstruct ephemeral central bundle
         shell: bash
         env:
-          EXPECTED_REVISION: ${{ vars.DEVOPS_PUBLIC_ENFORCEMENT_REVISION }}
           BOOTSTRAP_PATH: ${{ runner.temp }}/devops-v3-bootstrap.json
           BUNDLE_ROOT: ${{ runner.temp }}/devops-v3-bundle
         run: |
@@ -122,7 +111,7 @@ jobs:
           const sha256 = value => createHash('sha256').update(value).digest('hex');
           const response = JSON.parse(await readFile(process.env.BOOTSTRAP_PATH, 'utf8'));
           const bundle = response?.bundle;
-          if (!response?.ok || !bundle || bundle.controlPlaneRevision !== process.env.EXPECTED_REVISION) {
+          if (!response?.ok || !bundle || !/^[a-f0-9]{40}$/.test(bundle.controlPlaneRevision)) {
             throw new Error('relay bundle revision/shape mismatch');
           }
           const root = path.resolve(process.env.BUNDLE_ROOT);
