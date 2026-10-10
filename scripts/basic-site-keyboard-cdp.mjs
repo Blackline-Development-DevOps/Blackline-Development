@@ -85,7 +85,19 @@ try {
     await key('Enter','Enter',13);
     const skipDestination=await evaluate('({hash:location.hash,activeId:document.activeElement?.id||""})');
     assert.equal(skipDestination.hash,'#main-content','Skip link activation failed to navigate to main content');
-    cases.push({ route, width, firstEight: focus, reverse, skipDestination, accessibilityTree: axEvidence, passed: true });
+    let contactDisclosure = null;
+    if(route==='/contact/'){
+      const located = await evaluate('(()=>{const d=document.querySelector("details.intake-details");if(!d)return false;d.open=false;d.querySelector("summary").focus();return document.activeElement===d.querySelector("summary")})()');
+      assert.ok(located,'Contact disclosure summary must receive keyboard focus');
+      await key('Enter','Enter',13);
+      const opened=await evaluate('document.querySelector("details.intake-details")?.open===true');
+      assert.ok(opened,'Enter must open Contact optional-fields disclosure');
+      await key('Tab','Tab',9);
+      const nextFocus=await evaluate('({tag:document.activeElement?.tagName,id:document.activeElement?.id||""})');
+      assert.ok(['TEXTAREA','SELECT','INPUT'].includes(nextFocus.tag),'Expanded disclosure first control must be reachable using Tab');
+      contactDisclosure={opened,firstControl:nextFocus};
+    }
+    cases.push({ route, width, firstEight: focus, reverse, skipDestination, contactDisclosure, accessibilityTree: axEvidence, passed: true });
   }
   const report = { schemaVersion: 1, method: 'Chrome DevTools Protocol Input.dispatchKeyEvent', cases, passed: true, note: 'Trusted browser keyboard input plus Chromium accessibility-tree landmark/control names; not actual assistive-technology / screen-reader acceptance' };
   if (output) await writeFile(output, JSON.stringify(report, null, 2));
