@@ -77,3 +77,9 @@ The existing browser workflow captures 9 public routes at 320, 390, 900 and 1440
 - Exact candidate `b5fe7243faafab3fcde7b51b944f335b26a509be`: Foundation run [38074109723](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38074109723) **passed**; Chromium QA run [38074109743](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38074109743) **passed**.
 - Runtime audit opens every `<details>` panel, checks that enabled interactive descendants become programmatically focusable, and restores its prior open/closed state. This covers the previously untested Contact optional-fields state.
 - Does not prove Tab-key sequencing or screen-reader narration; those retain their separate manual review gate.
+
+## Chrome-dispatched keyboard navigation — 2026-10-10
+
+- Exact candidate `e2c3c3fdbf84d4ee32c934735d820ec465b3799e`: [Foundation CI 38074887937](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38074887937) **passed** and [Browser evidence 38074887968](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38074887968) **passed**.
+- `scripts/basic-site-keyboard-cdp.mjs` launches isolated headless Chromium and drives `Input.dispatchKeyEvent` (Tab / Shift+Tab) on Home and Contact routes at 320px and 1440px. It asserts skip-link-first navigation, the primary navigation becoming focused and Shift+Tab reversing to the preceding control. Its `keyboard-cdp.json` report is retained in the browser CI artifact.
+- This is a genuine browser keyboard-input test, not a physical person pressing keys or a screen-reader walkthrough. Manual assistive technology and full keyboard journey acceptance remain open. The 16-item standards acceptance record must not claim these unverified items Passed.
