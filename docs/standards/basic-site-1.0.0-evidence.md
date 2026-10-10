@@ -108,3 +108,9 @@ The existing browser workflow captures 9 public routes at 320, 390, 900 and 1440
 - Exact candidate `7a1883cf90754f180c9cdf70d063ca4d30cd3364`: [Foundation CI 38082776710](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38082776710) **passed**, [Chromium browser evidence 38082776716](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38082776716) **passed**.
 - Chromium accessibility-tree checks now reject images exposed to assistive technology without an accessible name; truly decorative ignored images are excluded. The real-keyboard evidence report also captures DOMContentLoaded and load-event timing and resource-entry counts for Home and Contact at 320px/1440px.
 - These measurements are laboratory observations, **not** Lighthouse or field Core Web Vitals, a full manual visual walkthrough, or NVDA/VoiceOver acceptance. Do not mark those broader checks Passed without real supporting evidence.
+
+## Lighthouse laboratory audits — 2026-10-10
+
+- Exact code candidate `3c65f0254d67bb86083ea18e54dcb127621caf94`: [Foundation CI 38084216617](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38084216617) **passed**, [Browser evidence 38084216545](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38084216545) **passed**.
+- Pinned Lighthouse 12.8.2 executes locally against built Home and Contact pages during CI, generates complete JSON reports for performance, accessibility, best practices and SEO, and a compact `lighthouse-summary.json` with numeric category scores, LCP and CLS where present. Reports are in the retained browser artifact; no arbitrary minimum Lighthouse score is claimed in this initial measurement.
+- This is an automated laboratory baseline, not CrUX/field Core Web Vitals, comprehensive human visual review or manual screen-reader testing. Formal 16-item acceptance remains blocked until its actual criteria are supported.
