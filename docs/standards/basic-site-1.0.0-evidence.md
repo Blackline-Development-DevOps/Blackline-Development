@@ -89,3 +89,9 @@ The existing browser workflow captures 9 public routes at 320, 390, 900 and 1440
 - Exact candidate `8e7f479a99f03d0c16d00e92a687cd0da9e3aa90`: [Foundation CI 38075540895](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38075540895) **passed** and [Chromium browser evidence 38075540625](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38075540625) **passed**.
 - The browser's DevTools accessibility tree is inspected alongside actual Tab/Shift+Tab input on Home and Contact at 320px and 1440px. The test requires a named navigation landmark, main landmark and accessible names for input roles, and retains results in `keyboard-cdp.json`.
 - This is automated inspection of the browser accessibility representation, **not** a screen-reader user test. Manual assistive-technology acceptance, layered contrast, legal-controller accuracy and the final 16-item evidence approval remain open.
+
+## Keyboard skip-link activation — 2026-10-10
+
+- Exact candidate `dc49abecd37d934c63707c9c7cda39b49a2cb751`: Foundation CI [38078193343](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38078193343) **passed** and Chromium evidence [38078193340](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38078193340) **passed**.
+- The CDP keyboard test now sends Tab followed by Enter on Home and Contact at 320px and 1440px and asserts that the skip link navigates to `#main-content`. This verifies actual browser keyboard activation, complementing Tab/Shift+Tab and accessibility-tree assertions.
+- Manual screen-reader, complete keyboard exploration and full formal standards acceptance remain pending.
