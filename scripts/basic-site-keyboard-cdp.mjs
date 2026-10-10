@@ -61,7 +61,11 @@ try {
     const userInputs = activeAx.filter(node => ['textbox','combobox','listbox','checkbox','radio'].includes(roleName(node)));
     const unnamedInputs = userInputs.filter(node => !accessibleName(node)).map(node => ({ role: roleName(node), nodeId: node.nodeId }));
     assert.equal(unnamedInputs.length,0,'Unnamed interactive controls in accessibility tree: '+JSON.stringify(unnamedInputs));
-    const axEvidence={landmarks:landmarks.map(node => ({role:roleName(node),name:accessibleName(node)})),namedInputCount:userInputs.length};
+    const imageNodes=activeAx.filter(node=>roleName(node)==='image');
+    const unnamedImages=imageNodes.filter(node=>!accessibleName(node)).map(node=>node.nodeId);
+    // Decorative images should not enter the accessibility tree at all.
+    assert.equal(unnamedImages.length,0,'Unnamed non-decorative images in accessibility tree: '+JSON.stringify(unnamedImages));
+    const axEvidence={landmarks:landmarks.map(node => ({role:roleName(node),name:accessibleName(node)})),namedInputCount:userInputs.length,imageCount:imageNodes.length};
     await evaluate('document.activeElement?.blur(); document.body.focus(); true');
     const focus = [];
     for (let i = 0; i < 8; i++) {
