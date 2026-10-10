@@ -100,9 +100,22 @@
     if(doc.activeElement!==el)row.focusFailures.push(el.outerHTML.slice(0,100));
   }
   row.focusOrderIsDomOrder=row.positiveTabindex.length===0;
+  // Exercise the native disclosure transition rather than treating hidden fields as permanently absent.
+  row.disclosureChecks=[];
+  for(const disclosure of doc.querySelectorAll('details')){
+    const wasOpen=disclosure.open;
+    disclosure.open=true;
+    const inner=[...disclosure.querySelectorAll('input,textarea,select,button,a[href],summary')].filter(el=>!el.disabled&&el.tabIndex>=0);
+    const failed=[];
+    for(const el of inner){el.focus();if(doc.activeElement!==el)failed.push(el.tagName);}
+    row.disclosureChecks.push({interactiveCount:inner.length,failed});
+    disclosure.open=wasOpen;
+  }
+
   row.errors=[];
   if(row.positiveTabindex.length)row.errors.push('positive-tabindex-order');
   if(row.focusFailures.length)row.errors.push('unfocusable-control');
+  if(row.disclosureChecks.some(check=>check.failed.length))row.errors.push('expanded-disclosure-focus-failed');
   if(row.focusCandidateCount<2)row.errors.push('no-navigation-focus-targets');
   if(row.lowContrast.length)row.errors.push('low-contrast-text');
   if(row.unlabelledControls.length)row.errors.push('unlabelled-form-control');
