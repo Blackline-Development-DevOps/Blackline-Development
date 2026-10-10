@@ -2,9 +2,9 @@
   "$schema": "https://blacklinedevelopment.uk/schemas/devops/v3/managed-repository-manifest.schema.json",
   "schemaVersion": 1,
   "projectId": "blackline-development",
-  "repository": "Blackline-Development-DevOps/Blackline-Development",
+  "repository": "Blackline-Development/Blackline-Development",
   "controlPlane": {
-    "repository": "Blackline-Development-DevOps/development-operations",
+    "repository": "Blackline-Development/development-operations",
     "contract": "v3"
   },
   "profile": "website",

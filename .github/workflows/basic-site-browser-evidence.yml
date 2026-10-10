@@ -1,0 +1,193 @@
+name: Basic Site browser evidence
+
+on:
+  pull_request:
+    branches:
+      - development
+
+permissions:
+  contents: read
+
+jobs:
+  browser-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run repository verification
+        run: |
+          npm test
+          npm run check
+          npm run lint
+          npm run build
+
+      - name: Capture browser evidence
+        shell: bash
+        run: |
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [[ -z "$chrome" ]]; then
+            echo 'A Chromium-compatible browser is required for Basic Site browser evidence' >&2
+            exit 1
+          fi
+
+          mkdir -p "$RUNNER_TEMP/basic-site-evidence"
+          BUILD_EVIDENCE_PATH="$RUNNER_TEMP/basic-site-evidence/build-asset-budget.json" \
+            node scripts/basic-site-build-budget.mjs
+          python3 -m http.server 4173 --directory dist >"$RUNNER_TEMP/basic-site-server.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then
+              break
+            fi
+            if [[ "$attempt" == '20' ]]; then
+              cat "$RUNNER_TEMP/basic-site-server.log" >&2
+              exit 1
+            fi
+            sleep 1
+          done
+
+          routes=(
+            "home:/"
+            "services:/services/"
+            "commissions:/commissions/"
+            "managed-services:/managed-services/"
+            "work:/work/"
+            "about:/about/"
+            "contact:/contact/"
+            "privacy:/privacy/"
+            "not-found:/404.html"
+          )
+          sizes=(
+            "desktop:1440,1200"
+            "tablet:900,1100"
+            "mobile:390,844"
+            "small-window:320,700"
+          )
+
+          for route in "${routes[@]}"; do
+            name="${route%%:*}"
+            url_path="${route#*:}"
+            curl --fail --silent "http://127.0.0.1:4173${url_path}" >"$RUNNER_TEMP/basic-site-evidence/${name}.html"
+            for size in "${sizes[@]}"; do
+              size_name="${size%%:*}"
+              dimensions="${size#*:}"
+              "$chrome" \
+                --headless=new \
+                --no-sandbox \
+                --disable-gpu \
+                --hide-scrollbars \
+                --force-device-scale-factor=1 \
+                --window-size="$dimensions" \
+                --screenshot="$RUNNER_TEMP/basic-site-evidence/${name}-${size_name}.png" \
+                "http://127.0.0.1:4173${url_path}"
+            done
+          done
+
+          "$chrome" \
+            --headless=new \
+            --no-sandbox \
+            --disable-gpu \
+            --dump-dom \
+            http://127.0.0.1:4173/contact/ \
+            >"$RUNNER_TEMP/basic-site-evidence/contact-rendered-dom.html"
+
+          # Fail closed on missing route evidence and malformed capture files.
+          for route in "${routes[@]}"; do
+            name="${route%%:*}"
+            test -s "$RUNNER_TEMP/basic-site-evidence/${name}.html"
+            for size in "${sizes[@]}"; do
+              size_name="${size%%:*}"
+              screenshot="$RUNNER_TEMP/basic-site-evidence/${name}-${size_name}.png"
+              test -s "$screenshot"
+              # PNG signature and nontrivial content; a successful browser exit is not
+              # sufficient if its screenshot file was empty or malformed.
+              python3 -c 'import pathlib,sys; d=pathlib.Path(sys.argv[1]).read_bytes(); assert len(d)>=1024 and d[:8]==bytes([137,80,78,71,13,10,26,10])' "$screenshot"
+            done
+          done
+          test -s "$RUNNER_TEMP/basic-site-evidence/contact-rendered-dom.html"
+          printf 'Routes: %s\\nViewports: %s\\nAll required screenshot PNGs and rendered HTML files were captured. Visual, keyboard, contrast and screen-reader acceptance still require independent review.\\n' "${#routes[@]}" "${#sizes[@]}" >"$RUNNER_TEMP/basic-site-evidence/capture-summary.txt"
+
+          cp scripts/basic-site-browser-audit.html dist/__qa-audit.html
+          "$chrome" --headless=new --no-sandbox --disable-gpu \
+            --virtual-time-budget=120000 --dump-dom \
+            http://127.0.0.1:4173/__qa-audit.html \
+            >"$RUNNER_TEMP/basic-site-evidence/runtime-audit-rendered.html"
+          python3 -c 'import pathlib,sys,re,json,html; raw=pathlib.Path(sys.argv[1]).read_text(); m=re.search("BASIC_SITE_AUDIT_BEGIN(.*?)BASIC_SITE_AUDIT_END",raw,re.S); assert m,"Browser audit did not finish"; data=json.loads(html.unescape(m.group(1).strip())); pathlib.Path(sys.argv[2]).write_text(json.dumps(data,indent=2)); assert data.get("passed"), str(data.get("problems"))' \
+            "$RUNNER_TEMP/basic-site-evidence/runtime-audit-rendered.html" \
+            "$RUNNER_TEMP/basic-site-evidence/runtime-audit.json"
+          rm dist/__qa-audit.html
+
+          # Drive genuine Chrome keyboard input via DevTools, not element.focus().
+          "$chrome" --headless=new --no-sandbox --disable-gpu \
+            --remote-debugging-port=9222 --remote-allow-origins='*' \
+            --user-data-dir="$RUNNER_TEMP/basic-site-cdp-profile" \
+            about:blank >"$RUNNER_TEMP/basic-site-cdp.log" 2>&1 &
+          cdp_pid=$!
+          trap 'kill "$cdp_pid" "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..25}; do
+            if curl --fail --silent http://127.0.0.1:9222/json/list >/dev/null; then break; fi
+            if [[ "$attempt" == '25' ]]; then cat "$RUNNER_TEMP/basic-site-cdp.log" >&2; exit 1; fi
+            sleep 1
+          done
+          KEYBOARD_EVIDENCE_PATH="$RUNNER_TEMP/basic-site-evidence/keyboard-cdp.json" \
+            node scripts/basic-site-keyboard-cdp.mjs
+          test -s "$RUNNER_TEMP/basic-site-evidence/keyboard-cdp.json"
+
+          # Collect reproducible lab Lighthouse reports; results are evidence, not field Core Web Vitals.
+          for route in home services commissions managed-services work about contact privacy not-found; do
+            case "$route" in
+              home) audit_path="/" ;;
+              contact) audit_path="/contact/" ;;
+              services) audit_path="/services/" ;;
+              commissions) audit_path="/commissions/" ;;
+              managed-services) audit_path="/managed-services/" ;;
+              work) audit_path="/work/" ;;
+              about) audit_path="/about/" ;;
+              privacy) audit_path="/privacy/" ;;
+              not-found) audit_path="/404.html" ;;
+            esac
+            npx --yes lighthouse@12.8.2 "http://127.0.0.1:4173$audit_path" \
+              --chrome-path="$chrome" \
+              --chrome-flags="--headless=new --no-sandbox --disable-gpu" \
+              --only-categories=performance,accessibility,best-practices,seo \
+              --quiet --output=json \
+              --output-path="$RUNNER_TEMP/basic-site-evidence/lighthouse-$route.json"
+          done
+          node --input-type=module -e '
+            import { readFile, writeFile } from "node:fs/promises";
+            const names = ["home", "services", "commissions", "managed-services", "work", "about", "contact", "privacy", "not-found"];
+            const reports = [];
+            for (const name of names) {
+              const report = JSON.parse(await readFile(process.env.RUNNER_TEMP + "/basic-site-evidence/lighthouse-" + name + ".json", "utf8"));
+              const scores = Object.fromEntries(Object.entries(report.categories).map(([id, category]) => [id, category.score]));
+              if (!["performance", "accessibility", "best-practices", "seo"].every(id => typeof scores[id] === "number")) throw Error("Incomplete Lighthouse scores: " + name);
+              reports.push({ name, url: report.finalDisplayedUrl, scores, largestContentfulPaintMs: report.audits["largest-contentful-paint"]?.numericValue ?? null, cumulativeLayoutShift: report.audits["cumulative-layout-shift"]?.numericValue ?? null });
+            }
+            await writeFile(process.env.RUNNER_TEMP + "/basic-site-evidence/lighthouse-summary.json", JSON.stringify({ method: "Lighthouse synthetic lab", reports, note: "Not a real-user field metric or manual accessibility acceptance" }, null, 2));
+            console.log(JSON.stringify(reports));
+          '
+
+          cp "$RUNNER_TEMP/basic-site-server.log" "$RUNNER_TEMP/basic-site-evidence/server.log"
+
+      - name: Upload browser evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: basic-site-browser-evidence
+          path: ${{ runner.temp }}/basic-site-evidence
+          if-no-files-found: error
+          retention-days: 7

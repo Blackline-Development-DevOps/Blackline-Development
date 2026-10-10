@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><title>Basic Site isolated viewport audit</title>
+<style>body{margin:0}iframe{position:absolute;top:0;left:0;opacity:0;pointer-events:none;border:0}pre{white-space:pre-wrap}</style>
+</head><body><pre id="result">RUNNING</pre><script>
+(async()=>{
+ const routes=['/','/services/','/commissions/','/managed-services/','/work/','/about/','/contact/','/privacy/','/404.html'];
+ const widths=[320,390,900,1440];
+ const frame=document.createElement('iframe');document.body.append(frame);
+ const checks=[];const problems=[];
+ for(const route of routes) for(const width of widths){
+  frame.style.width=width+'px';frame.style.height='900px';
+  const destination=route+(route.includes('?')?'&':'?')+'qa_width='+width;
+  await new Promise((resolve,reject)=>{
+   const timeout=setTimeout(()=>reject(new Error('iframe loading timed out: '+destination)),10000);
+   frame.onload=()=>{clearTimeout(timeout);resolve();};
+   frame.src=destination;
+  });
+  await new Promise(resolve=>setTimeout(resolve,70));
+  const doc=frame.contentDocument,win=frame.contentWindow;
+  const heading=doc.querySelector('h1');
+  const bounds=heading?.getBoundingClientRect();
+  const skip=doc.querySelector('a.skip-link[href="#main-content"]');
+  const anchors=[...doc.querySelectorAll('a[href^="#"]')].filter(a=>!doc.getElementById(a.getAttribute('href').slice(1))).map(a=>a.getAttribute('href'));
+  let focusableSkip=false;
+  if(skip){skip.focus();focusableSkip=doc.activeElement===skip;}
+  const row={
+   route,width,documentWidth:doc.documentElement.scrollWidth,viewportWidth:win.innerWidth,
+   oneHeading:doc.querySelectorAll('h1').length===1,
+   headingWithinViewport:!!bounds&&bounds.left>=-2&&bounds.right<=width+2,
+   hasLandmarks:!!doc.querySelector('nav[aria-label="Primary navigation"]')&&!!doc.querySelector('main#main-content')&&!!doc.querySelector('footer'),
+   focusableSkip,brokenAnchors:anchors,
+   title:doc.title
+  };
+  if(route==='/contact/'){
+   const form=doc.querySelector('#commission-intake-form');
+   row.formPresent=!!form;
+   if(form){
+    row.emptyFormInvalid=!form.checkValidity();
+    form.querySelector('[name="projectType"]').value='Website';
+    form.querySelector('[name="outcome"]').value='A public website for a small business.';
+    row.completeFormValid=form.checkValidity();
+    row.statusLive=doc.querySelector('#intake-status')?.getAttribute('aria-live')==='polite';
+   }
+  }
+  // Verify common accessibility contracts against rendered DOM, not CSS tokens.
+  const controls=[...doc.querySelectorAll('input:not([type="hidden"]),select,textarea')];
+  row.unlabelledControls=controls.filter(el=>{
+   const id=el.id;
+   const labelled=id&&[...doc.querySelectorAll('label[for]')].some(label=>label.getAttribute('for')===id);
+   return !labelled&&!el.closest('label')&&!el.getAttribute('aria-label')&&!el.getAttribute('aria-labelledby');
+  }).map(el=>el.name||el.tagName);
+  row.unlabelledButtons=[...doc.querySelectorAll('button')].filter(el=>!(el.textContent||'').trim()&&!el.getAttribute('aria-label')).length;
+  row.unlabelledLinks=[...doc.querySelectorAll('a')].filter(el=>!(el.textContent||'').trim()&&!el.getAttribute('aria-label')&&!el.querySelector('img[alt]:not([alt=""])')).length;
+  row.imagesMissingDimensions=[...doc.images].filter(el=>!(el.getAttribute('width')&&el.getAttribute('height'))).map(el=>el.getAttribute('src'));
+  const resourceEntries=win.performance.getEntriesByType('resource');
+  row.resourceCount=resourceEntries.length;
+  row.resourceTransferBytes=resourceEntries.reduce((sum,entry)=>sum+(entry.transferSize||0),0);
+  row.imageFailures=[...doc.images].filter(img=>!img.complete||img.naturalWidth===0).map(img=>img.currentSrc||img.src);
+  // Transfer sizes are browser observations, not Lighthouse or Core Web Vitals.
+  // A generous bound catches unexpectedly huge assets without claiming field performance.
+  row.resourceBudgetBytes=5*1024*1024;
+  // Explicit contrast sampling for opaque text/background combinations.
+  const luminance=hex=>{
+   const channels=hex.map(v=>v/255).map(v=>v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4));
+   return channels[0]*0.2126+channels[1]*0.7152+channels[2]*0.0722;
+  };
+  const rgb=value=>{const m=String(value).match(/^rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)(?:,\\s*([\\d.]+))?\\)$/);return m?{channels:[+m[1],+m[2],+m[3]],alpha:m[4]===undefined?1:+m[4]}:null;};
+  const samples=[...doc.querySelectorAll('h1,h2,h3,p,li,label,button,a')].slice(0,150);
+  row.contrastSamples=0;
+  row.lowContrast=[];
+  for(const el of samples){
+   const style=win.getComputedStyle(el);
+   if(style.visibility==='hidden'||style.display==='none'||!el.getClientRects().length)continue;
+   const foreground=rgb(style.color);
+   if(!foreground||foreground.alpha!==1)continue;
+   let cursor=el,background=null;
+   while(cursor&&cursor.nodeType===1){
+    const candidate=rgb(win.getComputedStyle(cursor).backgroundColor);
+    if(candidate&&candidate.alpha===1){background=candidate;break;}
+    cursor=cursor.parentElement;
+   }
+   if(!background)continue; // Unknown/composited backgrounds require manual review.
+   const levels=[luminance(foreground.channels),luminance(background.channels)].sort((a,b)=>b-a);
+   const ratio=(levels[0]+0.05)/(levels[1]+0.05);
+   row.contrastSamples++;
+   const large=parseFloat(style.fontSize)>=24||(parseFloat(style.fontSize)>=18.66&&parseFloat(style.fontWeight)>=700);
+   if(ratio<(large?3:4.5))row.lowContrast.push({tag:el.tagName,ratio:+ratio.toFixed(2),text:(el.textContent||'').trim().slice(0,50)});
+  }
+  // Check keyboard focus candidates and their actual computed visibility/order.
+  const candidates=[...doc.querySelectorAll('a[href],button,input,select,textarea,summary,[tabindex]')].filter(el=>{
+    const style=win.getComputedStyle(el);
+    const collapsed=el.closest('details:not([open])');
+    return !collapsed&&!el.disabled&&el.tabIndex>=0&&style.display!=='none'&&style.visibility!=='hidden'&&el.getClientRects().length>0;
+  });
+  row.focusCandidateCount=candidates.length;
+  row.positiveTabindex=candidates.filter(el=>el.tabIndex>0).map(el=>el.outerHTML.slice(0,100));
+  row.focusFailures=[];
+  for(const el of candidates.slice(0,80)){
+    el.focus();
+    if(doc.activeElement!==el)row.focusFailures.push(el.outerHTML.slice(0,100));
+  }
+  row.focusOrderIsDomOrder=row.positiveTabindex.length===0;
+  // Exercise the native disclosure transition rather than treating hidden fields as permanently absent.
+  row.disclosureChecks=[];
+  for(const disclosure of doc.querySelectorAll('details')){
+    const wasOpen=disclosure.open;
+    disclosure.open=true;
+    const inner=[...disclosure.querySelectorAll('input,textarea,select,button,a[href],summary')].filter(el=>!el.disabled&&el.tabIndex>=0);
+    const failed=[];
+    for(const el of inner){el.focus();if(doc.activeElement!==el)failed.push(el.tagName);}
+    row.disclosureChecks.push({interactiveCount:inner.length,failed});
+    disclosure.open=wasOpen;
+  }
+
+  row.errors=[];
+  if(row.positiveTabindex.length)row.errors.push('positive-tabindex-order');
+  if(row.focusFailures.length)row.errors.push('unfocusable-control');
+  if(row.disclosureChecks.some(check=>check.failed.length))row.errors.push('expanded-disclosure-focus-failed');
+  if(row.focusCandidateCount<2)row.errors.push('no-navigation-focus-targets');
+  if(row.lowContrast.length)row.errors.push('low-contrast-text');
+  if(row.unlabelledControls.length)row.errors.push('unlabelled-form-control');
+  if(row.unlabelledButtons)row.errors.push('unlabelled-button');
+  if(row.unlabelledLinks)row.errors.push('unlabelled-link');
+  if(row.imagesMissingDimensions.length)row.errors.push('image-without-dimensions');
+  if(row.imageFailures.length)row.errors.push('image-load-failed');
+  if(row.resourceTransferBytes>row.resourceBudgetBytes)row.errors.push('resource-transfer-budget-exceeded');
+  if(!row.title)row.errors.push('missing-title');
+  if(row.documentWidth>width+2)row.errors.push('document-overflow');
+  if(!row.oneHeading)row.errors.push('h1-count');
+  if(!row.headingWithinViewport)row.errors.push('clipped-heading');
+  if(!row.hasLandmarks)row.errors.push('missing-landmarks');
+  if(!row.focusableSkip)row.errors.push('skip-link-not-focusable');
+  if(anchors.length)row.errors.push('broken-anchor');
+  if(route==='/contact/'&&(!row.formPresent||!row.emptyFormInvalid||!row.completeFormValid||!row.statusLive))row.errors.push('contact-validation');
+  checks.push(row);
+  if(row.errors.length)problems.push({route,width,errors:row.errors});
+ }
+ const report={schemaVersion:1,runType:'chromium-iframe-layout-and-form-contract',routes:routes.length,widths,checks,problems,passed:!problems.length,note:'Structural/runtime browser assertions and rough transfer budget; does not replace Lighthouse, screen-reader, real keyboard traversal or full-page visual review.'};
+ document.getElementById('result').textContent='BASIC_SITE_AUDIT_BEGIN\n'+JSON.stringify(report)+'\nBASIC_SITE_AUDIT_END';
+})().catch(error=>{document.getElementById('result').textContent='BASIC_SITE_AUDIT_ERROR '+String(error?.stack||error);});
+</script></body></html>
