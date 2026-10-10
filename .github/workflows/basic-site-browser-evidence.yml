@@ -67,6 +67,7 @@ jobs:
             "work:/work/"
             "about:/about/"
             "contact:/contact/"
+            "privacy:/privacy/"
             "not-found:/404.html"
           )
           sizes=(
