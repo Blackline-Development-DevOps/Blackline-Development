@@ -130,6 +130,22 @@ jobs:
             "$RUNNER_TEMP/basic-site-evidence/runtime-audit.json"
           rm dist/__qa-audit.html
 
+          # Drive genuine Chrome keyboard input via DevTools, not element.focus().
+          "$chrome" --headless=new --no-sandbox --disable-gpu \
+            --remote-debugging-port=9222 --remote-allow-origins='*' \
+            --user-data-dir="$RUNNER_TEMP/basic-site-cdp-profile" \
+            about:blank >"$RUNNER_TEMP/basic-site-cdp.log" 2>&1 &
+          cdp_pid=$!
+          trap 'kill "$cdp_pid" "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..25}; do
+            if curl --fail --silent http://127.0.0.1:9222/json/list >/dev/null; then break; fi
+            if [[ "$attempt" == '25' ]]; then cat "$RUNNER_TEMP/basic-site-cdp.log" >&2; exit 1; fi
+            sleep 1
+          done
+          KEYBOARD_EVIDENCE_PATH="$RUNNER_TEMP/basic-site-evidence/keyboard-cdp.json" \
+            node scripts/basic-site-keyboard-cdp.mjs
+          test -s "$RUNNER_TEMP/basic-site-evidence/keyboard-cdp.json"
+
           cp "$RUNNER_TEMP/basic-site-server.log" "$RUNNER_TEMP/basic-site-evidence/server.log"
 
       - name: Upload browser evidence
