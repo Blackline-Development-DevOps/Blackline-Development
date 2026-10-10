@@ -53,3 +53,9 @@ The existing browser workflow captures 9 public routes at 320, 390, 900 and 1440
 - Exact candidate `ab7a352db2cca686394edc38428c3d3ac358cffe`: [Foundation CI run 38071492262](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38071492262) and [Chromium browser run 38071492300](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38071492300) **passed**.
 - `scripts/basic-site-browser-audit.html` now rejects unnamed links/buttons, form controls without accessible labels and images missing explicit layout dimensions, alongside the existing nine-route/four-width layout and form checks. The browser workflow fails if any check reports problems.
 - Browser-level structural checks do **not** constitute a manual screen-reader, real Tab-key journey, calibrated contrast or performance audit. These remain unaccepted pending genuine verification.
+
+## Browser resource and image checks — 2026-10-10
+
+- Exact candidate `9a392e0b389645dcae4b678ac8562d0997ba491c`: Foundation CI [38072588514](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38072588514) **passed**, Chromium browser evidence [38072588513](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38072588513) **passed**.
+- The browser audit now fails on images not successfully loaded and on over 5 MiB of transferred page resources, using each tested iframe's own `PerformanceResourceTiming` entries. Covers the existing 9 routes × 4 viewports.
+- This is a regression guard, **not** a complete real-user performance assessment, Lighthouse report, contrast measurement, manual keyboard review or screen-reader certification. Those acceptance requirements remain open.
