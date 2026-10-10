@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><title>Basic Site isolated viewport audit</title>
+<style>body{margin:0}iframe{position:absolute;top:0;left:0;opacity:0;pointer-events:none;border:0}pre{white-space:pre-wrap}</style>
+</head><body><pre id="result">RUNNING</pre><script>
+(async()=>{
+ const routes=['/','/services/','/commissions/','/managed-services/','/work/','/about/','/contact/','/privacy/','/404.html'];
+ const widths=[320,390,900,1440];
+ const frame=document.createElement('iframe');document.body.append(frame);
+ const checks=[];const problems=[];
+ for(const route of routes) for(const width of widths){
+  frame.style.width=width+'px';frame.style.height='900px';
+  const destination=route+(route.includes('?')?'&':'?')+'qa_width='+width;
+  await new Promise((resolve,reject)=>{
+   const timeout=setTimeout(()=>reject(new Error('iframe loading timed out: '+destination)),10000);
+   frame.onload=()=>{clearTimeout(timeout);resolve();};
+   frame.src=destination;
+  });
+  await new Promise(resolve=>setTimeout(resolve,70));
+  const doc=frame.contentDocument,win=frame.contentWindow;
+  const heading=doc.querySelector('h1');
+  const bounds=heading?.getBoundingClientRect();
+  const skip=doc.querySelector('a.skip-link[href="#main-content"]');
+  const anchors=[...doc.querySelectorAll('a[href^="#"]')].filter(a=>!doc.getElementById(a.getAttribute('href').slice(1))).map(a=>a.getAttribute('href'));
+  let focusableSkip=false;
+  if(skip){skip.focus();focusableSkip=doc.activeElement===skip;}
+  const row={
+   route,width,documentWidth:doc.documentElement.scrollWidth,viewportWidth:win.innerWidth,
+   oneHeading:doc.querySelectorAll('h1').length===1,
+   headingWithinViewport:!!bounds&&bounds.left>=-2&&bounds.right<=width+2,
+   hasLandmarks:!!doc.querySelector('nav[aria-label="Primary navigation"]')&&!!doc.querySelector('main#main-content')&&!!doc.querySelector('footer'),
+   focusableSkip,brokenAnchors:anchors,
+   title:doc.title
+  };
+  if(route==='/contact/'){
+   const form=doc.querySelector('#commission-intake-form');
+   row.formPresent=!!form;
+   if(form){
+    row.emptyFormInvalid=!form.checkValidity();
+    form.querySelector('[name="projectType"]').value='Website';
+    form.querySelector('[name="outcome"]').value='A public website for a small business.';
+    row.completeFormValid=form.checkValidity();
+    row.statusLive=doc.querySelector('#intake-status')?.getAttribute('aria-live')==='polite';
+   }
+  }
+  row.errors=[];
+  if(!row.title)row.errors.push('missing-title');
+  if(row.documentWidth>width+2)row.errors.push('document-overflow');
+  if(!row.oneHeading)row.errors.push('h1-count');
+  if(!row.headingWithinViewport)row.errors.push('clipped-heading');
+  if(!row.hasLandmarks)row.errors.push('missing-landmarks');
+  if(!row.focusableSkip)row.errors.push('skip-link-not-focusable');
+  if(anchors.length)row.errors.push('broken-anchor');
+  if(route==='/contact/'&&(!row.formPresent||!row.emptyFormInvalid||!row.completeFormValid||!row.statusLive))row.errors.push('contact-validation');
+  checks.push(row);
+  if(row.errors.length)problems.push({route,width,errors:row.errors});
+ }
+ const report={schemaVersion:1,runType:'chromium-iframe-layout-and-form-contract',routes:routes.length,widths,checks,problems,passed:!problems.length,note:'Structural/runtime browser assertions; does not replace screen-reader, manual keyboard or full-page visual review.'};
+ document.getElementById('result').textContent='BASIC_SITE_AUDIT_BEGIN\n'+JSON.stringify(report)+'\nBASIC_SITE_AUDIT_END';
+})().catch(error=>{document.getElementById('result').textContent='BASIC_SITE_AUDIT_ERROR '+String(error?.stack||error);});
+</script></body></html>
