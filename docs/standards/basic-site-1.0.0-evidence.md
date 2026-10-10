@@ -65,3 +65,9 @@ The existing browser workflow captures 9 public routes at 320, 390, 900 and 1440
 - Exact candidate `a0d9965ebaf6ed0268524501b06f1cfb54bdfa67`: [Foundation CI](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38072852658) **passed**; [Chromium browser audit](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38072852660) **passed**.
 - The nine-route/four-viewport browser audit now calculates WCAG contrast ratios for up to 150 visible text elements per page wherever the foreground and a background ancestor are resolvable opaque RGB colours. It fails when sampled normal text is below 4.5:1 or large text below 3:1.
 - **Limitation:** transparency, background images, blending and layered components are not conclusively covered. Manual contrast review and genuine assistive-technology / keyboard traversal remain outstanding; do not reclassify the entire `accessibility-review` evidence key as Passed.
+
+## Focus target and native disclosure review — 2026-10-10
+
+- Candidate `cabce602890d05e9ad2a62494a660ba3adf04f5f` initially failed browser run `38073164955` on Contact focusability because the audit included controls nested in a closed native `<details>` element. No production implementation was modified to hide this test failure.
+- Follow-up candidate `74a533f3a40eb837601fe0bfe2e006ad3cc1dd08` corrected the audit to exclude descendants of collapsed disclosures. Chromium run [38073284486](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38073284486) **passed**, checking focusability of visible natural-order controls and rejecting positive tabindex values on all nine routes at four widths.
+- This is programmatic focus verification, **not** proof of physical keyboard Tab/Shift+Tab navigation or assistive technology usability. That acceptance remains pending.
