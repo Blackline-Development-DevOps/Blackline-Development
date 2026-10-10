@@ -59,7 +59,35 @@
   // Transfer sizes are browser observations, not Lighthouse or Core Web Vitals.
   // A generous bound catches unexpectedly huge assets without claiming field performance.
   row.resourceBudgetBytes=5*1024*1024;
+  // Explicit contrast sampling for opaque text/background combinations.
+  const luminance=hex=>{
+   const channels=hex.map(v=>v/255).map(v=>v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4));
+   return channels[0]*0.2126+channels[1]*0.7152+channels[2]*0.0722;
+  };
+  const rgb=value=>{const m=String(value).match(/^rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)(?:,\\s*([\\d.]+))?\\)$/);return m?{channels:[+m[1],+m[2],+m[3]],alpha:m[4]===undefined?1:+m[4]}:null;};
+  const samples=[...doc.querySelectorAll('h1,h2,h3,p,li,label,button,a')].slice(0,150);
+  row.contrastSamples=0;
+  row.lowContrast=[];
+  for(const el of samples){
+   const style=win.getComputedStyle(el);
+   if(style.visibility==='hidden'||style.display==='none'||!el.getClientRects().length)continue;
+   const foreground=rgb(style.color);
+   if(!foreground||foreground.alpha!==1)continue;
+   let cursor=el,background=null;
+   while(cursor&&cursor.nodeType===1){
+    const candidate=rgb(win.getComputedStyle(cursor).backgroundColor);
+    if(candidate&&candidate.alpha===1){background=candidate;break;}
+    cursor=cursor.parentElement;
+   }
+   if(!background)continue; // Unknown/composited backgrounds require manual review.
+   const levels=[luminance(foreground.channels),luminance(background.channels)].sort((a,b)=>b-a);
+   const ratio=(levels[0]+0.05)/(levels[1]+0.05);
+   row.contrastSamples++;
+   const large=parseFloat(style.fontSize)>=24||(parseFloat(style.fontSize)>=18.66&&parseFloat(style.fontWeight)>=700);
+   if(ratio<(large?3:4.5))row.lowContrast.push({tag:el.tagName,ratio:+ratio.toFixed(2),text:(el.textContent||'').trim().slice(0,50)});
+  }
   row.errors=[];
+  if(row.lowContrast.length)row.errors.push('low-contrast-text');
   if(row.unlabelledControls.length)row.errors.push('unlabelled-form-control');
   if(row.unlabelledButtons)row.errors.push('unlabelled-button');
   if(row.unlabelledLinks)row.errors.push('unlabelled-link');
