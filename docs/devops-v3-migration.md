@@ -12,7 +12,7 @@ The thin V3 manifest is present on the migration candidate, but the repository m
 ## Canonical identity
 
 - Project ID: `blackline-development`
-- Repository: `Blackline-Development-DevOps/Blackline-Development`
+- Repository: `Blackline-Development/Blackline-Development`
 - Profile: `website`
 - Integration branch: `development`
 - Production branch: `production`
@@ -60,7 +60,7 @@ Central #741 provides the approved direction:
 - the runner executes central V3 enforcement against the checked-out candidate;
 - no long-lived Dev Ops secret is stored in this repository.
 
-The minimal OIDC caller is now present on `migration/devops-v3-public-adoption` as `.github/workflows/devops-v3-enforcement.yml`. It fails closed unless repository variables `DEVOPS_PUBLIC_ENFORCEMENT_URL` and `DEVOPS_PUBLIC_ENFORCEMENT_REVISION` identify a reachable HTTPS relay and the exact deployed control-plane commit. No long-lived Dev Ops credential is stored in this repository.
+The minimal OIDC caller is now present on `migration/devops-v3-public-adoption` as `.github/workflows/devops-v3-enforcement.yml`. It fails closed unless the repository variable `DEVOPS_PUBLIC_ENFORCEMENT_URL` identifies the approved HTTPS relay. The caller authenticates with a short-lived GitHub OIDC token, retrieves the exact deployed control-plane commit, and independently checks its 40-hex revision, every file SHA-256 and aggregate bundle digest. `DEVOPS_PUBLIC_ENFORCEMENT_REVISION` is no longer required or used in automatic mode. No long-lived Dev Ops credential is stored in this repository.
 
 ## Shared Project #5
 
