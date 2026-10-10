@@ -259,7 +259,7 @@ svg {
   letter-spacing: 0.15em;
 }
 
-.card h3 {
+.card h2,\n.card h3 {
   margin: 0 0 10px;
   font-size: 1.5rem;
   letter-spacing: -0.025em;
@@ -339,7 +339,7 @@ svg {
   background: var(--panel);
 }
 
-.panel h3 {
+.panel h2,\n.panel h3 {
   margin: 0 0 12px;
   font-size: clamp(1.6rem, 3vw, 2.45rem);
   letter-spacing: -0.035em;
