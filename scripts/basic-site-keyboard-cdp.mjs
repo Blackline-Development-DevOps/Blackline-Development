@@ -50,6 +50,9 @@ try {
       await new Promise(resolve => setTimeout(resolve, 100));
       if (i === 49) throw Error('Page readiness timeout ' + route);
     }
+    // Browser laboratory navigation timing is diagnostic, not a field Core Web Vital.
+    const timing=await evaluate('(()=>{const n=performance.getEntriesByType("navigation")[0];return {domContentLoadedMs:Math.round(n?.domContentLoadedEventEnd||0),loadEventMs:Math.round(n?.loadEventEnd||0),resourceCount:performance.getEntriesByType("resource").length}})()');
+    assert.ok(timing.loadEventMs>=0&&timing.domContentLoadedMs>=0,'Invalid navigation performance timing');
     // Inspect Chromium's accessibility tree, rather than DOM attributes alone.
     const axTree = (await send('Accessibility.getFullAXTree')).nodes;
     const activeAx = axTree.filter(node => !node.ignored);
@@ -103,7 +106,7 @@ try {
       assert.ok(['TEXTAREA','SELECT','INPUT'].includes(nextFocus.tag),'Expanded disclosure first control must be reachable using Tab');
       contactDisclosure={opened,firstControl:nextFocus};
     }
-    cases.push({ route, width, firstEight: focus, reverse, skipDestination, contactDisclosure, accessibilityTree: axEvidence, passed: true });
+    cases.push({ route, width, firstEight: focus, reverse, skipDestination, contactDisclosure, navigationTiming: timing, accessibilityTree: axEvidence, passed: true });
   }
   const report = { schemaVersion: 1, method: 'Chrome DevTools Protocol Input.dispatchKeyEvent', cases, passed: true, note: 'Trusted browser keyboard input plus Chromium accessibility-tree landmark/control names; not actual assistive-technology / screen-reader acceptance' };
   if (output) await writeFile(output, JSON.stringify(report, null, 2));
