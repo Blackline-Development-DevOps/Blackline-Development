@@ -34,7 +34,8 @@ async function evaluate(expression) {
   return result.result?.value;
 }
 async function key(key, code, keyCode, modifiers = 0) {
-  await send('Input.dispatchKeyEvent', { type: 'keyDown', key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode, modifiers });
+  await send('Input.dispatchKeyEvent', { type: 'rawKeyDown', key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode, modifiers });
+  if (key === 'Enter') await send('Input.dispatchKeyEvent', { type: 'char', text: '\r', key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode, modifiers });
   await send('Input.dispatchKeyEvent', { type: 'keyUp', key, code, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: keyCode, modifiers });
 }
 const cases = [];
