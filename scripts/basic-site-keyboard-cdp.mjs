@@ -1,3 +1,4 @@
+/* global process, fetch, WebSocket, setTimeout, console */
 import assert from 'node:assert/strict';
 import { writeFile } from 'node:fs/promises';
 
@@ -17,7 +18,8 @@ ws.addEventListener('message', event => {
   const request = pending.get(message.id);
   if (!request) return;
   pending.delete(message.id);
-  message.error ? request.reject(Error(message.error.message)) : request.resolve(message.result);
+  if (message.error) request.reject(Error(message.error.message));
+  else request.resolve(message.result);
 });
 function send(method, params = {}) {
   const id = ++seq;
