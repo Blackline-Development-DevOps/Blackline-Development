@@ -59,3 +59,9 @@ The existing browser workflow captures 9 public routes at 320, 390, 900 and 1440
 - Exact candidate `9a392e0b389645dcae4b678ac8562d0997ba491c`: Foundation CI [38072588514](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38072588514) **passed**, Chromium browser evidence [38072588513](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38072588513) **passed**.
 - The browser audit now fails on images not successfully loaded and on over 5 MiB of transferred page resources, using each tested iframe's own `PerformanceResourceTiming` entries. Covers the existing 9 routes × 4 viewports.
 - This is a regression guard, **not** a complete real-user performance assessment, Lighthouse report, contrast measurement, manual keyboard review or screen-reader certification. Those acceptance requirements remain open.
+
+## Measured opaque text contrast — 2026-10-10
+
+- Exact candidate `a0d9965ebaf6ed0268524501b06f1cfb54bdfa67`: [Foundation CI](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38072852658) **passed**; [Chromium browser audit](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38072852660) **passed**.
+- The nine-route/four-viewport browser audit now calculates WCAG contrast ratios for up to 150 visible text elements per page wherever the foreground and a background ancestor are resolvable opaque RGB colours. It fails when sampled normal text is below 4.5:1 or large text below 3:1.
+- **Limitation:** transparency, background images, blending and layered components are not conclusively covered. Manual contrast review and genuine assistive-technology / keyboard traversal remain outstanding; do not reclassify the entire `accessibility-review` evidence key as Passed.
