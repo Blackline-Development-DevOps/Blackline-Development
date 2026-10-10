@@ -113,12 +113,7 @@ jobs:
               test -s "$screenshot"
               # PNG signature and nontrivial content; a successful browser exit is not
               # sufficient if its screenshot file was empty or malformed.
-              python3 - "$screenshot" <<'PY'
-import pathlib, sys
-data = pathlib.Path(sys.argv[1]).read_bytes()
-if len(data) < 1024 or data[:8] != b'\\x89PNG\\r\\n\\x1a\\n':
-    raise SystemExit(f"Invalid browser screenshot: {sys.argv[1]}")
-PY
+              python3 -c 'import pathlib,sys; d=pathlib.Path(sys.argv[1]).read_bytes(); assert len(d)>=1024 and d[:8]==bytes([137,80,78,71,13,10,26,10])' "$screenshot"
             done
           done
           test -s "$RUNNER_TEMP/basic-site-evidence/contact-rendered-dom.html"
