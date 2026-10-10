@@ -71,3 +71,9 @@ The existing browser workflow captures 9 public routes at 320, 390, 900 and 1440
 - Candidate `cabce602890d05e9ad2a62494a660ba3adf04f5f` initially failed browser run `38073164955` on Contact focusability because the audit included controls nested in a closed native `<details>` element. No production implementation was modified to hide this test failure.
 - Follow-up candidate `74a533f3a40eb837601fe0bfe2e006ad3cc1dd08` corrected the audit to exclude descendants of collapsed disclosures. Chromium run [38073284486](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38073284486) **passed**, checking focusability of visible natural-order controls and rejecting positive tabindex values on all nine routes at four widths.
 - This is programmatic focus verification, **not** proof of physical keyboard Tab/Shift+Tab navigation or assistive technology usability. That acceptance remains pending.
+
+## Native disclosure opening test — 2026-10-10
+
+- Exact candidate `b5fe7243faafab3fcde7b51b944f335b26a509be`: Foundation run [38074109723](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38074109723) **passed**; Chromium QA run [38074109743](https://github.com/Blackline-Development/Blackline-Development/actions/runs/38074109743) **passed**.
+- Runtime audit opens every `<details>` panel, checks that enabled interactive descendants become programmatically focusable, and restores its prior open/closed state. This covers the previously untested Contact optional-fields state.
+- Does not prove Tab-key sequencing or screen-reader narration; those retain their separate manual review gate.
