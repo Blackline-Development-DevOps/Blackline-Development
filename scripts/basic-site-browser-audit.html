@@ -86,7 +86,23 @@
    const large=parseFloat(style.fontSize)>=24||(parseFloat(style.fontSize)>=18.66&&parseFloat(style.fontWeight)>=700);
    if(ratio<(large?3:4.5))row.lowContrast.push({tag:el.tagName,ratio:+ratio.toFixed(2),text:(el.textContent||'').trim().slice(0,50)});
   }
+  // Check keyboard focus candidates and their actual computed visibility/order.
+  const candidates=[...doc.querySelectorAll('a[href],button,input,select,textarea,summary,[tabindex]')].filter(el=>{
+    const style=win.getComputedStyle(el);
+    return !el.disabled&&el.tabIndex>=0&&style.display!=='none'&&style.visibility!=='hidden'&&el.getClientRects().length>0;
+  });
+  row.focusCandidateCount=candidates.length;
+  row.positiveTabindex=candidates.filter(el=>el.tabIndex>0).map(el=>el.outerHTML.slice(0,100));
+  row.focusFailures=[];
+  for(const el of candidates.slice(0,80)){
+    el.focus();
+    if(doc.activeElement!==el)row.focusFailures.push(el.outerHTML.slice(0,100));
+  }
+  row.focusOrderIsDomOrder=row.positiveTabindex.length===0;
   row.errors=[];
+  if(row.positiveTabindex.length)row.errors.push('positive-tabindex-order');
+  if(row.focusFailures.length)row.errors.push('unfocusable-control');
+  if(row.focusCandidateCount<2)row.errors.push('no-navigation-focus-targets');
   if(row.lowContrast.length)row.errors.push('low-contrast-text');
   if(row.unlabelledControls.length)row.errors.push('unlabelled-form-control');
   if(row.unlabelledButtons)row.errors.push('unlabelled-button');
